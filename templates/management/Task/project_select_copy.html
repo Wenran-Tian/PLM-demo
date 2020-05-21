@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>天控五轴PLM-项目选择</title>
+{% endblock %}
+
+
+{% block content %}
+    <form method="post" action="/plm/management/task/task_by_prj/" style="align-content: center">
+
+    {% csrf_token %}
+        <h3 style="text-align: center">请选择项目:
+            <h3 style="margin: 30px" style="align-content: center">
+                <select name="project">
+                    {% for project in projects %}
+                        <option value={{ project.id }}>{{ project.prj_name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="选择" class="btn btn-success btn-flat m-b-30 m-t-30" style="margin: 10px">
+            </h3>
+
+        </h3>
+
+    </form>
+
+
+{% endblock %}

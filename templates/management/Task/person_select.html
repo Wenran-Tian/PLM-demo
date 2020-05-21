@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>天控五轴PLM-人员选择</title>
+{% endblock %}
+
+
+{% block content %}
+    <h3 style="text-align: center">请选择人员: </h3>
+    <p></p>
+    <p></p>
+    <div class="row">
+        {% for person in persons %}
+                <div class="col-lg-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <a href="/plm/management/task/task_by_person?pid={{ person.id }}" target="_blank">
+                            <div class="stat-widget-five">
+                                <div class="stat-icon dib flat-color-3">
+                                    <i class="pe-7s-users"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="text-left dib">
+                                        <div class="stat-text">{{ person.name }}</div>
+                                        <div class="stat-heading">
+                                            {{ person.dep.title }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            {#        <option value={{ project.id }}>{{ project.prj_name }}</option>#}
+
+
+        {% endfor %}
+</div>
+
+
+{% endblock %}

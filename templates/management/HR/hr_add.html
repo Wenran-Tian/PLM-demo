@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+
+{% block head %}
+    <title>天控五轴PLM-添加人员</title>
+    <style>
+        .btn{
+            width: 100px;
+            margin: 5px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <form action="/plm/management/hr/add/" method="POST">
+    {% csrf_token %}
+        <input type="submit" value="提交"  class="btn btn-outline-success"/> <a type="button" href="/plm/management/hr/" class="btn btn-outline-secondary">取消</a>
+        <p>姓名：</p>
+        <p><input type="text" name="name"></p>
+        <p>性别：</p>
+        <p>
+            <select name = "gender">
+                <option value=1 selected>男</option>
+                <option value=2>女</option>
+            </select>
+        </p>
+        <p>部门：</p>
+        <p>
+            <select name = "department">
+                {% for dep in deps %}
+                    <option value={{ dep.id }}>{{ dep.title }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>职称：</p>
+        <p>
+            <select name = "rank">
+                {% for item in ranks %}
+                    <option value={{ item }} selected>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>状态：</p>
+        <p>
+        <input type="text" value="在职" name="status"/>
+        </p>
+    </form>
+{% endblock %}

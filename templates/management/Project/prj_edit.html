@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+
+{% block head %}
+    <title>天控五轴PLM-编辑项目</title>
+    <style>
+        .btn{
+            width: 100px;
+            margin: 5px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <form action="/plm/management/project/edit/" method="POST">
+    {% csrf_token %}
+        <input type="submit" value="提交"  class="btn btn-outline-success"/> <a type="button" href="#" onclick="history.back(-1);" class="btn btn-outline-secondary">取消</a>
+         <p><input value={{ project.prj_id }} name="prj_id" style="display: none"></p>
+        <p>项目名称：<input type="text" name="prj_name" value="{{ project.prj_name }}"> 产品型号：<input type="text" name="product_model" value="{{ project.product_model }}"></p>
+        <p>项目创建人：
+            <select name="created_by_id">
+                {% for person in persons %}
+                    {% if person.id == project.created_by_id %}
+                        <option value="{{ person.id }}" selected>{{ person.name }}</option>
+                    {% else %}
+                        <option value="{{ person.id }}">{{ person.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            项目负责人：
+            <select name="managed_by_id">
+                {% for person in persons %}
+                    {% if person.id == project.managed_by_id %}
+                        <option value="{{ person.id }}" selected>{{ person.name }}</option>
+                    {% else %}
+                        <option value="{{ person.id }}">{{ person.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+        </p>
+        <p>开始时间：<input type="date" name="start_time" value="{{ time_list.0 }}">  结束时间：<input type="date" name="end_time" value="{{ time_list.1 }}"></p>
+
+        <p>项目预算：<input type="number" name="prj_budget" step="0.01" value="{{ project.prj_budget }}">  状态：<input type="text" value="{{ project.status }}" name="status"/></p>
+        <p>阶段备注：</p>
+        <p><textarea name="remark" rows="3" cols="150" id = "ta1"> {{ project.remark }}</textarea></p>
+        <p>项目说明：</p>
+        <p><textarea name="statement" rows="10" cols="150" id = "ta2">{{ project.statement }}</textarea></p>
+    </form>
+{% endblock %}
+
+{% block js %}
+    <script>
+    {#document.getElementById('#ta1').value="what's the hell?"; //#}
+    {#document.getElementById('#ta2').value={{ project.statement }};#}
+
+
+    </script>
+{% endblock %}

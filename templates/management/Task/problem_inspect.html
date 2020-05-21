@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>天控五轴PLM-检视问题</title>
+{% endblock %}
+
+
+{% block content %}
+
+        <a type="button" href="/plm/management/task/edit?tid={{ task.id }}" class="btn btn-outline-primary">编辑属性</a>
+        <a type="button" href="#" class="btn btn-outline-secondary" onclick="history.back(-1)">返回</a>
+        &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+        <a type="button" href="#" onClick=" delete_task();" class="btn btn-outline-warning">删除问题</a>
+
+
+    <div class="row" style="margin-top: 20px">
+        <div class="col-lg-3">
+                <section class="card">
+                    <div class="card-body text-secondary">所属任务：{{ problem.parent_task.task_name }}</div>
+                </section>
+         </div>
+         <div class="col-lg-3">
+                <section class="card">
+                    <div class="card-body text-secondary">问题描述：{{ problem.prob_title }}</div>
+                </section>
+         </div>
+         <div class="col-lg-3">
+                <section class="card">
+                    <div class="card-body text-secondary">解决方案：{{ problem.remark }}</div>
+                </section>
+         </div>
+        <div class="col-lg-3">
+                <section class="card">
+                    <div class="card-body text-secondary">责任人：{{ problem.responsible.name }}</div>
+                </section>
+        </div>
+        <div class="col-lg-3">
+                <section class="card">
+                    <div class="card-body text-secondary">发起时间：{{ problem.start_time }}</div>
+                </section>
+        </div>
+                <div class="col-lg-3">
+                <section class="card">
+                    <div class="card-body text-secondary">预计结束时间：{{ problem.expect_end_time }}</div>
+                </section>
+         </div>
+         <div class="col-lg-3">
+                <section class="card">
+                    <div class="card-body text-secondary">实际结束时间：{{ problem.real_end_time }}</div>
+                </section>
+         </div>
+        <div class="col-lg-3">
+                <section class="card">
+                     {% if problem.condition == 0 %}
+                            <div class="card-body text-secondary" style="background-color: lightgrey">未开始</div>
+                        {% elif task.condition == 1 %}
+                            <div class="card-body text-secondary" style="background-color:royalblue">进行中</div>
+                        {% elif task.condition == 2 %}
+                            <div class="card-body text-secondary" style="background-color: yellow">预警</div>
+                        {% elif task.condition == 3 %}
+                            <div class="card-body text-secondary" style="background-color: orange">延期</div>
+                        {% elif task.condition == 4 %}
+                            <div class="card-body text-secondary" style="background-color: red">取消</div>
+                        {% elif task.condition == 5 %}
+                            <div class="card-body text-secondary" style="background-color:springgreen">完成</div>
+                        {% else %}
+                            <div class="card-body text-secondary" style="background-color: green;color: white">延期完成</div>
+                        {% endif %}
+                </section>
+        </div>
+    </div>
+
+        <div class="row">
+            <div class="col-lg-4" style="margin-top: 10px">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">问题文件：</strong>
+                    </div>
+                    <div class="card-body">
+                        <form enctype="multipart/form-data" action="/plm/management/upload/" method="POST">
+                            {% csrf_token %}
+                            <input type="file" name="myfile" /><input type="submit" value="上传文件" class="btn-sm btn-primary" style="float: right"/>
+{#                            <br/>#}
+
+                            <p><input value="{{ task.id }}" name="task_id" style="display: none"></p>
+                            {% if files %}
+                                {% for file in files %}
+                                    <p style="margin: 5px"><a href="/plm/management/download?fid={{ file.id }}">{{ file.name }}</a>
+                                        <input style="display: none" value="{{ file.id }}">| <input value="删除" class="del_file" type="button">
+                                    </p>
+                                {% endfor %}
+                            {% else %}
+                                <p>暂无文件</p>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

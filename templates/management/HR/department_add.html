@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+
+{% block head %}
+    <title>天控五轴PLM-添加部门</title>
+    <style>
+        .btn{
+            width: 100px;
+            margin: 5px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <form action="/plm/management/department/add/" method="POST">
+    {% csrf_token %}
+        <input type="submit" value="提交"  class="btn btn-outline-success"/> <a type="button" href="/plm/management/department/" class="btn btn-outline-secondary">取消</a>
+        <p>名称：</p>
+        <p><input type="text" name="title"></p>
+        <p>负责人：</p>
+        <p>
+            <select name = "mgr_id">
+                {% for person in persons %}
+                    <option value="{{ person.id }}">{{ person.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+
+    </form>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+
+{% block head %}
+    <title>天控五轴PLM-添加项目</title>
+    <style>
+        .btn{
+            width: 100px;
+            margin: 5px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <form action="/plm/management/project/add/" method="POST">
+    {% csrf_token %}
+        <input type="submit" value="提交"  class="btn btn-outline-success"/> <a type="button" href="/plm/management/project/" class="btn btn-outline-secondary">取消</a>
+        <p></p>
+        <p>项目名称：<input type="text" name="prj_name"> 产品型号：<input type="text" name="product_model"></p>
+        <p>项目创建人：
+            <select name="created_by_id">
+                {% for person in persons %}
+                <option value="{{ person.id }}">{{ person.name }}</option>
+                {% endfor %}
+            </select>
+            项目负责人：
+            <select name="managed_by_id">
+                {% for person in persons %}
+                <option value="{{ person.id }}">{{ person.name }}</option>
+                {% endfor %}
+            </select>
+
+        </p>
+        <p>开始时间：<input type="date" name="start_time">  结束时间：<input type="date" name="end_time"></p>
+
+        <p>项目预算：<input type="number" name="prj_budget" step="0.01">  状态：<input type="text" value="预备" name="status"/></p>
+        <p>阶段备注：</p>
+        <p><textarea name="remark" rows="3" cols="150" ></textarea></p>
+        <p>项目说明：</p>
+        <p><textarea name="statement" rows="10" cols="150" ></textarea></p>
+
+    </form>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>天控五轴PLM-增加任务</title>
+    <style>
+        .btn{
+            width: 100px;
+            margin: 5px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <form action="/plm/management/task/add/" method="POST">
+    {% csrf_token %}
+        <input type="submit" value="提交"  class="btn btn-outline-success"/> <a type="button"  href="#" onClick=" history.back(-1);" class="btn btn-outline-secondary">取消</a>
+        <p style="display: none"><input name="parent_task_id" value={{ id_info.1 }} ><input name="parent_project_id" value={{ id_info.0 }} ></p>
+        <p style="font-size: 25px">项目名称：{{ project.prj_name }}</p>
+        {% if parent_task %}
+                    <p style="font-size: 25px"> 父任务名称：{{ parent_task.task_name }}  <span style="font-size: 20px"> 开始时间：{{ parent_task.t_start_time.year}}-{{ parent_task.t_start_time.month}}-{{ parent_task.t_start_time.day}}
+                        结束时间：{{ parent_task.t_end_time.year }}-{{ parent_task.t_end_time.month }}-{{ parent_task.t_end_time.day }}</span> </p>
+
+        {% endif %}
+        <p style="font-size: 25px"> 任务名称：<input type="text" name="task_name"></p>
+{#        <p style="font-size: 25px">任务负责人：{{ task.principle.name }}</p>#}
+        <p>
+            任务负责人：
+            <select name="principle_id">
+                {% for person in persons %}
+                <option value="{{ person.id }}">{{ person.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>开始时间：<input type="date" name="t_start_time">  结束时间：<input type="date" name="t_end_time"></p>
+{#        <p style="font-size: 25px">参与人员:</p>#}
+{#        <table class="table table-bordered table-striped table-hover">#}
+{#            <tr><th>姓名</th><th>部门</th><th>说明</th></tr>#}
+{#            {% for relation in relations %}#}
+{#                <tr>#}
+{#                    <td> {{ relation.person.name }}</td>#}
+{#                    <td> {{ relation.person.dep.title }} </td>#}
+{#                    <td> {{ relation.remark }}</td>#}
+{#                </tr>#}
+{#            {% endfor %}#}
+{#        </table>#}
+
+        <p>任务预算：<input type="number" name="task_budget" step="0.01">  执行情况：
+            <select name="condition">
+                {% for condition in conditions %}
+                    <option value="{{ condition }}">{{ condition }}</option>
+                {% endfor %}
+            </select>
+
+        </p>
+        <p>备注：</p>
+        <p><textarea name="remark" rows="3" cols="150" ></textarea></p>
+        <p>说明：</p>
+        <p><textarea name="statement" rows="10" cols="150" ></textarea></p>
+
+    </form>
+{% endblock %}
+
+{% block js %}
+
+
+
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title> {{ person.name }}-任务检视 </title>
+{% endblock %}
+
+
+
+{% block content %}
+    <table class="table table-bordered table-striped table-hover">
+        <tr>
+            <th>唯一ID</th><th>姓名</th><th>性别</th><th>部门</th><th>职称</th><th>状态</th>
+        </tr>
+        <tr>
+            <td>{{ person.pid }}</td><td>{{ person.name }}</td>
+            {% if person.gender == 1 %}
+                <td>男</td>
+            {% else %}
+                <td>女</td>
+            {% endif %}
+            <td>{{ person.dep.title }}</td><td>{{ person.rank }}</td><td>{{ person.status }}</td>
+        </tr>
+    </table>
+
+    <h3>执行中任务:</h3><p></p>
+    {% if ptt_executings %}
+        <table class="table table-bordered table-striped table-hover">
+        <tr>
+            <th>任务名称</th><th>所属项目</th><th>时间</th><th>工作说明</th><th>备注</th><th>状态</th>
+        </tr>
+        {% for ptt_executing in ptt_executings %}
+            <tr>
+                <td>{{ ptt_executing.task.task_name }}</td><td>{{ ptt_executing.task.parent_project.prj_name }}</td>
+                <td>
+                    {{ ptt_executing.task.t_start_time.year }}-{{ ptt_executing.task.t_start_time.month }}-{{ ptt_executing.task.t_start_time.day }}至
+                    {{ ptt_executing.task.t_end_time.year }}-{{ ptt_executing.task.t_end_time.month }}-{{ ptt_executing.task.t_end_time.day }}
+                </td>
+                <td>{{ ptt_executing.remark }}</td><td>{{ ptt_executing.task.remark }}</td>
+                <td>
+                    {% if ptt_executing.task.condition == 0 %}
+                        <p style="background-color: lightgrey">未开始</p>
+                    {% elif ptt_executing.task.condition == 1 %}
+                        <p style="background-color:royalblue">进行中</p>
+                    {% elif ptt_executing.task.condition == 2 %}
+                        <p style="background-color: yellow">延期</p>
+                    {% elif ptt_executing.task.condition == 3 %}
+                        <p style="background-color: orange">延误</p>
+                    {% elif ptt_executing.task.condition == 4 %}
+                        <p style="background-color: red">取消</p>
+                    {% elif ptt_executing.task.condition == 5 %}
+                        <p style="background-color:springgreen">完成</p>
+                    {% else %}
+                        <p style="background-color: green">延期完成</p>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% else %}
+        <h4>  <p></p> 暂无</h4>
+    {% endif %}
+
+    <h3>未开始任务:</h3><p></p>
+ {% if ptt_notstarts %}
+        <table class="table table-bordered table-striped table-hover">
+        <tr>
+            <th>任务名称</th><th>所属项目</th><th>时间</th><th>工作说明</th><th>备注</th><th>状态</th>
+        </tr>
+        {% for ptt_executing in ptt_notstarts %}
+            <tr>
+                <td>{{ ptt_executing.task.task_name }}</td><td>{{ ptt_executing.task.parent_project.prj_name }}</td>
+                <td>
+                    {{ ptt_executing.task.t_start_time.year }}-{{ ptt_executing.task.t_start_time.month }}-{{ ptt_executing.task.t_start_time.day }}至
+                    {{ ptt_executing.task.t_end_time.year }}-{{ ptt_executing.task.t_end_time.month }}-{{ ptt_executing.task.t_end_time.day }}
+                </td>
+                <td>{{ ptt_executing.remark }}</td><td>{{ ptt_executing.task.remark }}</td>
+                <td>
+                    {% if ptt_executing.task.condition == 0 %}
+                        <p style="background-color: lightgrey">未开始</p>
+                    {% elif ptt_executing.task.condition == 1 %}
+                        <p style="background-color:royalblue">进行中</p>
+                    {% elif ptt_executing.task.condition == 2 %}
+                        <p style="background-color: yellow">延期</p>
+                    {% elif ptt_executing.task.condition == 3 %}
+                        <p style="background-color: orange">延误</p>
+                    {% elif ptt_executing.task.condition == 4 %}
+                        <p style="background-color: red">取消</p>
+                    {% elif ptt_executing.task.condition == 5 %}
+                        <p style="background-color:springgreen">完成</p>
+                    {% else %}
+                        <p style="background-color: green">延期完成</p>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% else %}
+     <h4> <p></p>  暂无</h4>
+    {% endif %}
+
+
+    <h3>已完成任务:</h3><p></p>
+ {% if ptt_finished %}
+        <table class="table table-bordered table-striped table-hover">
+        <tr>
+            <th>任务名称</th><th>所属项目</th><th>时间</th><th>工作说明</th><th>备注</th><th>状态</th>
+        </tr>
+        {% for ptt_executing in ptt_finished %}
+            <tr>
+                <td>{{ ptt_executing.task.task_name }}</td><td>{{ ptt_executing.task.parent_project.prj_name }}</td>
+                <td>
+                    {{ ptt_executing.task.t_start_time.year }}-{{ ptt_executing.task.t_start_time.month }}-{{ ptt_executing.task.t_start_time.day }}至
+                    {{ ptt_executing.task.t_end_time.year }}-{{ ptt_executing.task.t_end_time.month }}-{{ ptt_executing.task.t_end_time.day }}
+                </td>
+                <td>{{ ptt_executing.remark }}</td><td>{{ ptt_executing.task.remark }}</td>
+                <td>
+                    {% if ptt_executing.task.condition == 0 %}
+                        <p style="background-color: lightgrey">未开始</p>
+                    {% elif ptt_executing.task.condition == 1 %}
+                        <p style="background-color:royalblue">进行中</p>
+                    {% elif ptt_executing.task.condition == 2 %}
+                        <p style="background-color: yellow">延期</p>
+                    {% elif ptt_executing.task.condition == 3 %}
+                        <p style="background-color: orange">延误</p>
+                    {% elif ptt_executing.task.condition == 4 %}
+                        <p style="background-color: red">取消</p>
+                    {% elif ptt_executing.task.condition == 5 %}
+                        <p style="background-color:springgreen">完成</p>
+                    {% else %}
+                        <p style="background-color: green">延期完成</p>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% else %}
+        <h4>  <p></p> 暂无</h4>
+    {% endif %}
+{% endblock %}

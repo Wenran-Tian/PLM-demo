@@ -1,0 +1,574 @@
+{% extends "layout.html" %}
+
+
+{% block head %}
+    <title>天控五轴PLM-检视任务</title>
+    <style>
+        p{
+            margin-left: 5px;
+        }
+        .btn {
+            width: 100px;
+            margin-bottom: 5px;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .shadow {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            background-color: black;
+            opacity: 0.4;
+            z-index: 999;
+        }
+
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 1200px;
+            height: 300px;
+            z-index: 1001;
+            background-image: url("/static/timg.gif");
+            margin-left: -600px;
+            margin-top: -150px;
+        }
+
+        .window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 500px;
+            height: 180px;
+            z-index: 1000;
+            background-color: white;
+            margin-left: -250px;
+            margin-top: -90px;
+        }
+
+        .window2 {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 500px;
+            height: 250px;
+            z-index: 1000;
+            background-color: white;
+            margin-left: -250px;
+            margin-top: -125px;
+        }
+        .window3 {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 460px;
+            height: 350px;
+            z-index: 1000;
+            background-color: white;
+            margin-left: -240px;
+            margin-top: -175px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <p><input value="{{ task.id }}" name="taskid" style="display: none"></p>
+
+    <form action="/plm/management/project/inspect/" method="POST">
+        {% csrf_token %}
+        <a type="button" href="/plm/management/task/edit?tid={{ task.id }}" class="btn btn-outline-primary">编辑属性</a>
+        <a type="button" href="#" onClick=" history.back(-1);" class="btn btn-outline-secondary">返回</a>
+        &#160;&#160;
+        &#160;&#160;
+        &#160;&#160;
+        &#160;&#160;
+        <a type="button" href="#" onClick=" delete_task();" class="btn btn-outline-warning">删除任务</a>
+
+            <div class="row" style="margin-bottom: 10px; margin-top: 10px">
+                    <div class="col-lg-3">
+                        <section class="card">
+                            <div class="card-body text-secondary">项目名称：{{ task.parent_project.prj_name }}</div>
+                        </section>
+                    </div>
+                    {% if task.parent_task %}
+                        <div class="col-lg-3">
+                            <section class="card">
+                                <div class="card-body text-secondary">父任务名称：{{ task.parent_task.task_name }}</div>
+                            </section>
+                        </div>
+                    {% endif %}
+                    <div class="col-lg-3">
+                        <section class="card">
+                            <div class="card-body text-secondary">任务名称：{{ task.task_name }}</div>
+                        </section>
+                    </div>
+                    <div class="col-lg-3">
+                        <section class="card">
+                            <div class="card-body text-secondary">任务负责人：{{ task.principle.name }}</div>
+                        </section>
+                    </div>
+                    <div class="col-lg-6">
+                        <section class="card">
+                            <div class="card-body text-secondary">
+                                开始时间：{{ task.t_start_time.year }}-{{ task.t_start_time.month }}-{{ task.t_start_time.day }}&#160;&#160;&#160;&#160;
+                                结束时间：{{ task.t_end_time.year }}-{{ task.t_end_time.month }}-{{ task.t_end_time.day }}&#160;&#160;&#160;&#160;
+                                时长:{{ task.duration }}天</div>
+                        </section>
+                    </div>
+                    <div class="col-lg-3">
+                        <section class="card">
+                            <div class="card-body text-secondary">任务预算：{{ task.task_budget }} </div>
+                        </section>
+                    </div>
+                    <div class="col-lg-3">
+                        <section class="card">
+{#                            <div class="card-body text-secondary">状态：</div>#}
+                            {% if task.condition == 0 %}
+                                <div class="card-body text-secondary" style="background-color: lightgrey">未开始</div>
+                            {% elif task.condition == 1 %}
+                                <div class="card-body text-secondary" style="background-color:royalblue">进行中</div>
+                            {% elif task.condition == 2 %}
+                                <div class="card-body text-secondary" style="background-color: yellow">预警</div>
+                            {% elif task.condition == 3 %}
+                                <div class="card-body text-secondary" style="background-color: orange">延期</div>
+                            {% elif task.condition == 4 %}
+                                <div class="card-body text-secondary" style="background-color: red">取消</div>
+                            {% elif task.condition == 5 %}
+                                <div class="card-body text-secondary" style="background-color:springgreen">完成</div>
+                            {% else %}
+                                <div class="card-body text-secondary" style="background-color: green">延期完成</div>
+                            {% endif %}
+                        </section>
+                    </div>
+
+            </div>
+
+
+
+        {#        <p>#}
+        {#            任务负责人：#}
+        {#            <select name="managed_by_id">#}
+        {#                {% for person in persons %}#}
+        {#                <option value="{{ person.id }}">{{ person.name }}</option>#}
+        {#                {% endfor %}#}
+        {#            </select>#}
+        {#        </p>#}
+        <p >
+        </p>
+        <strong >参与人员:</strong>
+        <p></p>
+        <p><input value="添加人员" class="btn btn-outline-primary" id="add_person_btn" type="button"></p>
+        <table class="table table-bordered table-striped table-hover">
+            <tr>
+                <th style="display: none">id</th>
+                <th>姓名</th>
+                <th>部门</th>
+                <th>工作说明</th>
+                <th>操作</th>
+            </tr>
+            {% for relation in relations %}
+                <tr>
+                    <td style="display: none"> {{ relation.person.id }}</td>
+                    <td> {{ relation.person.name }}</td>
+                    <td> {{ relation.person.dep.title }} </td>
+                    <td> {{ relation.remark }}</td>
+                    <td><a class="dia_edit btn btn-outline-success">编辑</a> | <a class="dia_del btn btn-outline-secondary">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <strong>现有问题:</strong>
+        <p></p>
+        <p><input value="新问题" class="btn btn-outline-warning" id="add_problem_btn" type="button"></p>
+        {% if problems %}
+
+        <table class="table table-bordered table-striped table-hover">
+            <tr>
+                <th style="display: none">负责人id</th>
+                <th style="display: none">问题id</th>
+                <th>问题名称</th>
+                <th>解决方案</th>
+                <th>状态</th>
+                <th>责任人</th>
+                <th>操作</th>
+            </tr>
+            {% for problem in problems %}
+                <tr>
+                    <td style="display: none">{{ problem.responsible_id }}</td>
+                    <td style="display: none">{{ problem.id }}</td>
+                    <td> {{ problem.prob_title }}</td>
+                    <td> {{ problem.remark }}</td>
+{#                    <td></td>#}
+                        {% if problem.condition == 0 %}
+                            <td style="background-color: lightgrey">未解决</td>
+                        {% elif problem.condition == 1 %}
+                            <td style="background-color:royalblue">进行中</td>
+                        {% elif problem.condition == 2 %}
+                            <td style="background-color: yellow">预警</td>
+                        {% elif problem.condition == 3 %}
+                            <td style="background-color: orange">延期</td>
+                        {% elif problem.condition == 4 %}
+                            <td style="background-color: red">取消</td>
+                        {% elif problem.condition == 5 %}
+                            <td style="background-color:springgreen">完成</td>
+                        {% else %}
+                            <td style="background-color: green">延期完成</td>
+                        {% endif %}
+
+                    <td> {{ problem.responsible.name }}</td>
+                    <td><a class="dia_edit_prob btn btn-outline-success">编辑</a> | <a class="dia_del_prob btn btn-outline-secondary">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p>暂无问题</p>
+        {% endif %}
+
+        <p style="font-size: 25px">备注：</p>
+        <p style="background-color: white">{{ task.remark }}</p>
+        <p style="font-size: 25px">任务说明：</p>
+        <p style="background-color: white">{{ task.statement }}</p>
+
+
+        {#        <p>任务预算：<input type="number" name="prj_budget" step="0.01">  状态：<input type="text" value="预备" name="status"/></p>#}
+        {#        <p>备注：</p>#}
+        {#        <p><textarea name="remark" rows="3" cols="150" ></textarea></p>#}
+        {#        <p>说明：</p>#}
+        {#        <p><textarea name="statement" rows="10" cols="150" ></textarea></p>#}
+        <div id="shadow" class="hide shadow"></div>
+        <div id="del_window1" class="window hide container">
+            <p style="margin: 10px; text-align: center; top:20px">您确认要删除任务：{{ task.task_name }}?
+                {#            {% csrf_token %}#}
+            <p>
+                <input class="btn" style="display: none" id="delpid">
+                <input class="btn btn-outline-secondary btn-flat" value="删 除" id="delbtn" type="button"
+                       style="position:relative; left: 20px; top: 60px">
+                <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button"
+                       style="position:relative; left: 225px; top: 60px">
+            </p>
+        </div>
+        <div id="del_window2" class="window hide container">
+            <p style="margin: 10px; text-align: center; top:20px">您删除之后，若此任务存在子任务，则其子任务会被一并删除，确认删除 ？</p>
+            {#            {% csrf_token %}#}
+            <p>
+                <input class="btn" style="display: none" id="delpid">
+                <a class="btn btn-outline-secondary btn-flat" href="/plm/management/task/del?tid={{ task.id }}"
+                   id="delbtn" type="button" style="position:relative; left: 20px; top: 40px">删 除</a>
+                <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button"
+                       style="position:relative; left: 225px; top: 40px">
+            </p>
+        </div>
+        <div id="addperson_window" class="window2 hide">
+            {% csrf_token %}
+            <p style="margin: 10px; text-align: center; top:20px">添加人员到{{ task.task_name }}<p>
+            <strong>选择人员
+                <select id="person_slc">
+                    {% for person in persons %}
+                        <option value="{{ person.id }}">{{ person.name }}</option>
+                    {% endfor %}
+                </select>
+{#                <input type="text" contenteditable="false" id="msg"  />#}
+            </strong>
+            <p>请输入工作说明:<input type="text" id="remark"/></p>
+            <p>
+            <a class="btn btn-outline-primary btn-flat" id="addbtn" type="button"
+               style="position:relative; left: 20px; top: 40px">添 加</a>
+            <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button"
+                   style="position:relative; left: 225px; top: 40px"></p>
+        </div>
+
+        <div id="del_person_window" class="window hide container">
+            <p style="margin: 10px; text-align: center; top:20px">您确认从任务人员中删除<input id="del_name" contenteditable="false">?
+                {% csrf_token %}
+            <p>
+                <input class="btn" style="display: none" id="del_person_id">
+                <input class="btn btn-outline-secondary btn-flat" value="删 除" id="delpersonbtn" type="button"
+                       style="position:relative; left: 20px; top: 60px">
+                <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button"
+                       style="position:relative; left: 225px; top: 60px">
+            </p>
+        </div>
+
+        <div id="edit_person_window" class="window2 hide container">
+            <p style="margin: 10px; text-align: center; top:20px">编辑<input id="edit_name" contenteditable="false" style="width: 60px;">工作说明
+                {% csrf_token %}
+            <p>
+                <input id="editremark" type="text">
+            <p>
+
+            </p>
+                <input class="btn" style="display: none" id="edit_person_id">
+                <input class="btn btn-outline-success btn-flat" value="提 交" id="editpersonbtn" type="button"
+                       style="position:relative; left: 20px; top: 60px">
+                <input class="btn btn-outline-secondary btn-flat" value="取 消" onclick="Cancel();" type="button"
+                       style="position:relative; left: 225px; top: 60px">
+            </p>
+        </div>
+
+        <div id="addproblem_window" class="window3 hide">
+            {% csrf_token %}
+            <p style="margin: 10px; text-align: center; top:20px">添加问题到{{ task.task_name }}<p>
+            <p>请输入问题名:<input type="text" id="prob_title"/></p>
+            <p>选择负责人
+                <select id="person_slc_prob">
+                    {% for person in persons %}
+                        <option value="{{ person.id }}">{{ person.name }}</option>
+                    {% endfor %}
+                </select>
+{#                <input type="text" contenteditable="false" id="msg"  />#}
+                选择问题状态：
+                <select id="prob_condition">
+                    {% for condition in conditions %}
+                        <option value="{{ condition }}">{{ condition }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <p>请输入问题备注:</p>
+                <textarea style="margin-left: 5px" id="prob_remark" rows="4" cols="50"></textarea>
+            <p>
+                <a class="btn btn-outline-primary btn-flat" id="addbtn_prob" type="button"
+                   style="position:relative; left: 20px; top: 10px">添 加</a>
+                <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button"
+                       style="position:relative; left: 225px; top: 10px">
+            </p>
+        </div>
+
+        <div id="del_prob_window" class="window hide container">
+            <p style="margin: 10px; text-align: center; top:20px">您确认删除问题<input id="del_prob_dia" contenteditable="false">?
+                {% csrf_token %}
+            <p>
+                <input class="btn" style="display: none" id="del_prob_id">
+                <input class="btn btn-outline-secondary btn-flat" value="删 除" id="delprobbtn" type="button"
+                       style="position:relative; left: 20px; top: 60px">
+                <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button"
+                       style="position:relative; left: 225px; top: 60px">
+            </p>
+        </div>
+
+        <div id="editproblem_window" class="window3 hide">
+            {% csrf_token %}
+            <input style="display: none" id="edit_problem_id">
+            <p style="margin: 10px; text-align: center; top:20px">编辑问题：{{ task.task_name }}<p>
+            <p>请输入问题名:<input type="text" id="prob_title_edit"/></p>
+            <p>选择负责人
+                <select id="person_slc_prob_edit">
+                    {% for person in persons %}
+                        <option value={{ person.id }}>{{ person.name }}</option>
+                    {% endfor %}
+                </select>
+{#                <input type="text" contenteditable="false" id="msg"  />#}
+                选择问题状态：
+                <select id="prob_condition_edit">
+                    {% for condition in conditions %}
+                        <option value="{{ condition }}">{{ condition }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <p>请输入问题备注:</p>
+                <textarea style="margin-left: 5px" id="prob_remark_edit" rows="4" cols="50"></textarea>
+            <p>
+                <a class="btn btn-outline-primary btn-flat" id="editbtn_prob" type="button"
+                   style="position:relative; left: 20px; top: 10px">添 加</a>
+                <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button"
+                       style="position:relative; left: 225px; top: 10px">
+            </p>
+        </div>
+
+    </form>
+{% endblock %}
+
+{% block js %}
+    <script>
+        function delete_task() {
+            $('#shadow, #del_window1').removeClass('hide');
+        }
+
+        function Cancel() {
+            $('#shadow, #editproblem_window, #del_window1, #del_window2, #addperson_window, #del_person_window, #edit_person_window, #addproblem_window, #del_prob_window').addClass('hide');
+        }
+
+        $('#delbtn').click(function () {
+            $('#del_window1').addClass('hide');
+            $('#del_window2').removeClass('hide');
+        });
+
+        $(function () {
+            $('#add_person_btn').click(function () {
+                $('#shadow,#addperson_window').removeClass('hide')
+            });
+            $('#addbtn').click(function () {
+                let csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                $.ajax({
+                    url: "/plm/management/persontotask/add/",
+                    type: "POST",
+                    data: {
+                        'remark': $('#remark').val(),
+                        'csrfmiddlewaretoken': csrf,
+                        'task_id': {{ task.id }},
+                        'person_slc':$('#person_slc').val(),
+                    },
+                    dataType: 'JSON',
+                    success: function (args) {
+                        if (args.status) {
+                            location.reload();
+                        }else{
+                            $('#msg').value(args.msg);
+                        }
+                    }
+                })
+            });
+
+            $('.dia_del').click(function () {
+                let tr = $(this).parent().prevAll();
+                {#let name = #}
+
+                $('#del_name').val($(tr[2]).text());
+                $('#del_person_id').val($(tr[3]).text());
+                $('#shadow,#del_person_window').removeClass('hide')
+            });
+
+             $('#delpersonbtn').click(function () {
+                let csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                $.ajax({
+                    url: "/plm/management/persontotask/del/",
+                    type: "POST",
+                    data: {
+                        'csrfmiddlewaretoken': csrf,
+                        'task_id': {{ task.id }},
+                        'person_slc':$('#del_person_id').val(),
+                    },
+                    dataType: 'JSON',
+                    success: function (args) {
+                        if (args.status) {
+                            location.reload();
+                        }else{
+                            $('#msg').value(args.msg);
+                        }
+                    }
+                })
+            });
+
+             $('.dia_edit').click(function () {
+                 $('#shadow, #edit_person_window').removeClass('hide');
+                 let tr = $(this).parent().prevAll();
+                 $('#edit_name').val($(tr[2]).text());
+                 $('#editremark').val($(tr[0]).text());
+                 $('#edit_person_id').val($(tr[3]).text());
+             });
+
+            $('#editpersonbtn').click(function () {
+                let csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                $.ajax({
+                    url:"/plm/management/persontotask/edit/",
+                    type:'POST',
+                    data:{
+                        'remark': $('#editremark').val(),
+                        'csrfmiddlewaretoken': csrf,
+                        'task_id': {{ task.id }},
+                        'person_slc':$('#edit_person_id').val(),
+                    },
+                    dataType : 'JSON',
+                    success:function (args) {
+                        if(args.status){
+                            location.reload()
+                        }
+                    }
+                })
+            });
+
+            $('#add_problem_btn').click(function () {
+                $('#addproblem_window, #shadow').removeClass('hide');
+            });
+            $('#addbtn_prob').click(function () {
+                let csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                $.ajax({
+                    url:"/plm/management/task/add_prob/",
+                    type:'POST',
+                    data:{
+                        'prob_title': $('#prob_title').val(),
+                        'remark': $('#prob_remark').val(),
+                        'csrfmiddlewaretoken': csrf,
+                        'task_id': {{ task.id }},
+                        'responsible':$('#person_slc_prob').val(),
+                        "condition": $('#prob_condition').val() ,
+                    },
+                    dataType : 'JSON',
+                    success:function (args) {
+                        if(args.status){
+                            location.reload()
+                        }
+                    }
+                })
+            });
+            $('.dia_del_prob').click(function () {
+                let tr = $(this).parent().prevAll();
+                {#let name = #}
+
+                $('#del_prob_dia').val($(tr[3]).text());
+                $('#del_prob_id').val($(tr[4]).text());
+                $('#shadow,#del_prob_window').removeClass('hide');
+                });
+        });
+            $('#delprobbtn').click(function () {
+                let csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                $.ajax({
+                    url:"/plm/management/task/del_prob/",
+                    type:'POST',
+                    data:{
+                        'prob_id': $('#del_prob_id').val(),
+                        'csrfmiddlewaretoken': csrf,
+                    },
+                    dataType : 'JSON',
+                    success:function (args) {
+                        if(args.status){
+                            location.reload()
+                        }
+                    }
+                })
+            });
+
+            $('.dia_edit_prob').click(function () {
+                $('#editproblem_window, #shadow').removeClass('hide');
+                let tr = $(this).parent().prevAll();
+                $('#prob_title_edit').val($(tr[3]).text());
+                $('#person_slc_prob_edit').val($(tr[5]).text());
+                $('#prob_condition_edit').val($(tr[1]).text());
+                $('#prob_remark_edit').val($(tr[2]).text());
+                {#$('#prob_remark_edit').val($(tr[2]).text());#}
+                $('#edit_problem_id').val($(tr[4]).text());
+            });
+            $('#editbtn_prob').click(function () {
+                let csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                $.ajax({
+                    url:"/plm/management/task/edit_prob/",
+                    type:'POST',
+                    data:{
+                        'prob_id': $('#edit_problem_id').val(),
+                        "prob_title": $('#prob_title_edit').val(),
+                        "remark": $('#prob_remark_edit').val(),
+                        "condition": $('#prob_condition_edit').val(),
+                        "responsible_id": $('#person_slc_prob_edit').val(),
+
+                        'csrfmiddlewaretoken': csrf,
+                    },
+                    dataType : 'JSON',
+                    success:function (args) {
+                        if(args.status){
+                            location.reload()
+                        }
+                    }
+                })
+            });
+
+
+    </script>
+
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+
+{% block head %}
+    <title>天控五轴PLM-编辑人员</title>
+    <style>
+        .btn{
+            width: 100px;
+            margin: 5px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <form action="/plm/management/hr/edit/" method="POST">
+    {% csrf_token %}
+        <input type="submit" value="提交"  class="btn btn-outline-success"/> <a type="button" href="/plm/management/hr/" class="btn btn-outline-secondary">取消</a>
+        <p>姓名：</p>
+        <p><input type="text" name="name" value={{ ep.name }}></p>
+        <p>性别：</p>
+        <p>
+            <select name = "gender">
+                {% if ep.gender == 1 %}
+                    <option value=1 selected>男</option>
+                    <option value=2>女</option>
+                {% else %}
+                    <option value=1>男</option>
+                    <option value=2 selected>女</option>
+                {% endif %}
+            </select>
+        </p>
+        <p>部门：</p>
+        <p>
+            <select name = "department">
+                {% for dep in deps %}
+                    {% if ep.dep_id == dep.id  %}
+                        <option value={{ dep.id }} selected>{{ dep.title }}</option>
+                    {% else %}
+                        <option value={{ dep.id }}>{{ dep.title }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </p>
+        <p>职称：</p>
+        <p>
+            <select name = "rank">
+                {% for item in ranks %}
+                    {% if item == ep.rank %}
+                        <option value={{ item }} selected>{{ item }}</option>
+                    {% else %}
+                        <option value={{ item }}>{{ item }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </p>
+        <p>状态：</p>
+        <p>
+        <input type="text" value="{{ ep.status }}" name="status" />
+        </p>
+        <input name="id" value="{{ ep.id }}" style="display: none">
+    </form>
+{% endblock %}

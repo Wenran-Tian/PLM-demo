@@ -1,0 +1,154 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>天控五轴PLM-人员管理</title>
+    <style>
+         .hide {
+            display: none;
+        }
+        .shadow {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            background-color: black;
+            opacity: 0.4;
+            z-index: 999;
+        }
+
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 300px;
+            z-index: 1001;
+            background-image: url("/static/timg.gif");
+            margin-left: -300px;
+            margin-top: -150px;
+        }
+
+        .window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 150px;
+            z-index: 1000;
+            background-color: white;
+            margin-left: -200px;
+            margin-top: -75px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+{#    <div class="breadcrumbs" style="top:20px">#}
+{#            <div class="breadcrumbs-inner">#}
+{#                <div class="row m-0">#}
+{#                    <div class="col-sm-4">#}
+{#                        <div class="page-header float-left">#}
+{#                            <div class="page-title">#}
+{#                                <h1>人员列表</h1>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="col-sm-8">#}
+{#                        <div class="page-header float-right">#}
+{#                            <div class="page-title">#}
+{#                                <ol class="breadcrumb text-right">#}
+{#                                    <li><a href="#">人员列表</a></li>#}
+{#                                    <li><a href="#">人事</a></li>#}
+{#                                    <li class="active">天控五轴PLM</li>#}
+{#                                </ol>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+
+
+    <a type="button" href="/plm/management/hr/add/" style="margin: 5px" class="btn btn-outline-primary">添加人员</a>
+
+    <table class="table table-bordered table-striped table-hover">
+    <tr>
+        <th><a href="/plm/management/hr?index=pid" class = "btn-outline-secondary btn-sm">唯一ID</a></th>
+        <th><a href="/plm/management/hr?index=name"  class = "btn-outline-secondary btn-sm">姓名</a></th>
+        <th><a href="/plm/management/hr?index=gender" class = "btn-outline-secondary btn-sm">性别</a></th>
+        <th><a href="/plm/management/hr?index=dep_id" class = "btn-outline-secondary btn-sm">部门</a></th>
+        <th><a href="/plm/management/hr?index=rank" class = "btn-outline-secondary btn-sm">职称</a></th>
+        <th><a href="/plm/management/hr?index=status" class = "btn-outline-secondary btn-sm">状态</a></th>
+        <th>操作</th>
+        {% for person in hrdata %}
+            <tr>
+                <td>{{ person.pid }}</td><td>{{ person.name }}</td>
+                {% if person.gender == 1 %}
+                    <td>男</td>
+                {% else %}
+                    <td>女</td>
+                {% endif %}
+                <td>{{ person.dep.title }}</td><td>{{ person.rank }}</td><td>{{ person.status }}</td>
+                <td>
+                    <a class="btn btn-outline-success" href="/plm/management/hr/edit?pid={{ person.pid }}" >编辑</a> | <a class="dia_del btn btn-outline-secondary">删除</a>
+                </td>
+            </tr>
+        {% endfor %}
+
+    </tr>
+
+
+    </table>
+
+
+    <div id="shadow" class="shadow hide"></div>
+    <div id="loading" class="loading hide"></div>
+    <div id="diaDel" class="window hide container">
+        <p style="margin: 10px; text-align: center; top:20px">您确认要删除 <input id="delname" readonly="true"/>？</p>
+        {% csrf_token %}
+        <p>
+            <input class="btn" style="display: none" id="delpid">
+            <input class="btn btn-outline-secondary btn-flat" value="删 除" id="delbtn" type="button"
+                   style="position:relative; left: 20px; top: 40px">
+            <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button"
+                   style="position:relative; left: 225px; top: 40px">
+        </p>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function () {
+            $('.dia_del').click(function () {
+                $('#shadow, #diaDel').removeClass('hide');
+                let tds = $(this).parent().prevAll();
+                let name = $(tds[4]).text();
+                let pid = $(tds[5]).text();
+                $('#delname').val(name);
+                $('#delpid').val(pid);
+            });
+            $('#delbtn').click(function () {
+                let csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                $.ajax({
+                    url : "/plm/management/hr/del/",
+                    type : "POST",
+                    data : {'pid':$('#delpid').val(),'csrfmiddlewaretoken': csrf},
+                    dataType : 'JSON',
+                    success:function (arg) {
+                        if(arg.status){
+                            location.reload()
+                        }
+                    }
+                })
+            })
+        });
+        function Cancel() {
+            $('#shadow, #diaDel').addClass('hide')
+        }
+
+
+    </script>
+
+{% endblock %}

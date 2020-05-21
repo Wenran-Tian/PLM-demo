@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>天控五轴PLM-编辑任务</title>
+    <style>
+        .btn{
+            width: 100px;
+            margin: 5px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <form action="/plm/management/task/edit/" method="POST">
+    {% csrf_token %}
+        <input type="submit" value="提交"  class="btn btn-outline-success"/> <a type="button"  href="#" onClick=" history.back(-1);" class="btn btn-outline-secondary">取消</a>
+        <p style="display: none"><input name="task_id" value={{ task.id }} ><input name="parent_project_id" value={{ project.id }} ></p>
+        <p>项目名称：{{ project.prj_name }}</p>
+        {% if parent_task %}
+                    <p > 父任务名称：{{ parent_task.task_name }}  开始时间：{{ parent_task.t_start_time.year}}-{{ parent_task.t_start_time.month}}-{{ parent_task.t_start_time.day}}
+                        结束时间：{{ parent_task.t_end_time.year }}-{{ parent_task.t_end_time.month }}-{{ parent_task.t_end_time.day }} </p>
+        {% endif %}
+        <p> 任务名称：<input type="text" name="task_name" value="{{ task.task_name }}"></p>
+{#        <p style="font-size: 25px">任务负责人：{{ task.principle.name }}</p>#}
+        <p>
+            任务负责人：
+            <select name="principle_id">
+                {% for person in persons %}
+                    {% if person.id == task.principle_id %}
+                        <option value="{{ person.id }}" selected>{{ person.name }}</option>
+                    {% else %}
+                        <option value="{{ person.id }}">{{ person.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </p>
+        <p>开始时间：<input type="date" name="t_start_time" value="{{ se_time.0 }}">  结束时间：<input type="date" name="t_end_time" value={{ se_time.1 }}></p>
+
+        <p>任务预算：<input type="number" name="task_budget" step="0.01" value={{ task.task_budget }}>  状态：
+            <select name="condition">
+                {% for condition in conditions %}
+                    {% if condition == now_condition %}
+                        <option value="{{ condition }}" selected>{{ condition }}</option>
+                    {% else %}
+                        <option value="{{ condition }}">{{ condition }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+        </p>
+        <p>备注：</p>
+        <p><textarea name="remark" rows="3" cols="150" >{{ task.remark }}</textarea></p>
+        <p>说明：</p>
+        <p><textarea name="statement" rows="10" cols="150" >{{ task.statement }}</textarea></p>
+
+    </form>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+
+
+    </script>
+{% endblock %}

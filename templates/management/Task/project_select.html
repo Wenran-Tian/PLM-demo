@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>天控五轴PLM-项目选择</title>
+{% endblock %}
+
+
+{% block content %}
+
+
+    <h3 style="text-align: center">请选择项目: </h3>
+    <p></p>
+    <p></p>
+
+    <div class="row">
+    {% for project in projects %}
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="stat-widget-five">
+                        <div class="stat-icon dib flat-color-3">
+                            <i class="pe-7s-browser"></i>
+                        </div>
+                        <a href="/plm/management/task/task_by_prj?pid={{ project.id }}" target="_blank">
+                        <div class="stat-content">
+                            <div class="text-left dib">
+                                <div class="stat-text">{{ project.prj_name }}</div>
+                                <div class="stat-heading">
+                                    {{ project.start_time.year}}-{{ project.start_time.month}}-{{ project.start_time.day}}至
+                                    {{ project.end_time.year }}-{{ project.end_time.month }}-{{ project.end_time.day }}
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{#        <option value={{ project.id }}>{{ project.prj_name }}</option>#}
+
+    {% endfor %}
+    </div>
+
+
+{% endblock %}
