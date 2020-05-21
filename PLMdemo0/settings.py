@@ -141,10 +141,22 @@ except ImportError:
     pass
 
 """ git this project
+!! 0. .gitignore
 !! 1.git should omit some files(e.g. local_settings)
+git init
 
+git add .
+git commit -m "first upload"
 
+git push https://github.com/Wenran-Tian/PLM-demo.git master
+git remote add origin https://github.com/Wenran-Tian/PLM-demo.git
 
+git push origin master
 
+//entry the directory which we want to clone the code 
+git clone https://github.com/Wenran-Tian/PLM-demo.git
 
+!!pip freeze > requirements.txt
+!!pip install -r requirements.txt
 """
+
