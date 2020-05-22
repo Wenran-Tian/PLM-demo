@@ -1,8 +1,6 @@
 from django.shortcuts import render,HttpResponse,redirect
-from Management import models
+from apps.Management import models
 import json
-from django.forms import Form
-from django.forms import fields
 from functools import wraps
 # Create your views here.
 
@@ -52,7 +50,7 @@ def hr_add(request):
         # if np["pid"] == "":
         lp = models.personnel.objects.latest('id')
         strid = str(lp.id)
-        models.personnel.objects.filter(id=lp.id).update(pid='P' + '0'*(3-len(strid)) + strid)
+        models.personnel.objects.filter(id=lp.id).update(pid='P' + '0' * (3 - len(strid)) + strid)
     return redirect('/plm/management/hr/')
 
 
@@ -74,7 +72,7 @@ def hr_edit(request):
         ep = models.personnel.objects.filter(pid=op_id).values().first()
         # print(ep)
         deps = models.department.objects.all()
-        return render(request,'management/HR/hr_edit.html', {"ep": ep, "deps": deps, "ranks": models.RANK_LIST})
+        return render(request, 'management/HR/hr_edit.html', {"ep": ep, "deps": deps, "ranks": models.RANK_LIST})
     else:
         np = {}
         np["name"] = request.POST.get("name")
@@ -146,7 +144,7 @@ def department_add(request):
         models.department.objects.create(**nd)
         ld = models.department.objects.exclude(did="D99").latest('id')
         strid = str(ld.id)
-        models.department.objects.filter(id=ld.id).update(did='D' + '0'*(2-len(strid)) + strid)
+        models.department.objects.filter(id=ld.id).update(did='D' + '0' * (2 - len(strid)) + strid)
     return redirect('/plm/management/department/')
 
 

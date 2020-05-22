@@ -1,11 +1,10 @@
 from django.shortcuts import render,HttpResponse,redirect
-from Management import models
+from apps.Management import models
 import time
 import json
-from django.forms import Form
-from django.forms import fields
 from functools import wraps
-from Management import utils
+
+
 # Create your views here.
 
 
@@ -60,7 +59,7 @@ def prj_add(request):
         lp = models.Project.objects.latest('id')
         strid = str(lp.id)
         print('PRJ' + '0'*(5-len(strid)) + strid)
-        models.Project.objects.filter(id=lp.id).update(prj_id='PRJ' + '0'*(5-len(strid)) + strid)
+        models.Project.objects.filter(id=lp.id).update(prj_id='PRJ' + '0' * (5 - len(strid)) + strid)
     return redirect('/plm/management/project/')
 
 

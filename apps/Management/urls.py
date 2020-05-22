@@ -1,5 +1,6 @@
 from django.urls import path
-from Management import views_HR, views_Prj, views_Task, views_Prob
+from apps.Management import views_Prob
+from apps.Management import views_Task, views_HR, views_Prj
 
 urlpatterns = [
 

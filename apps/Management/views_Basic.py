@@ -1,9 +1,9 @@
-from django.shortcuts import render,HttpResponse,redirect
-from Management import models
-import json
+from django.shortcuts import render, redirect
+from apps.Management import models
 from django.forms import Form
 from django.forms import fields
-from functools import wraps
+
+
 # Create your views here.
 
 

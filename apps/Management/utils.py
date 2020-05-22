@@ -1,4 +1,4 @@
-from Management import models
+from apps.Management import models
 import datetime
 date_str = "April 15, 2020"
 month_dict= {"January": "1","February":"2","March":"3","April":"4","May":"5",

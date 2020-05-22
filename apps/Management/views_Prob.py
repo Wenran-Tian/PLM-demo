@@ -1,5 +1,5 @@
-from django.shortcuts import HttpResponse,render,redirect
-from Management import models
+from django.shortcuts import render
+from apps.Management import models
 
 
 def problem_inspect(request):

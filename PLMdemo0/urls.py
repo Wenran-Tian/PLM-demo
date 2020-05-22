@@ -15,12 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from Management import views_Basic
+from apps.Management import views_Basic
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('plm/management/', include('Management.urls')),
-
+    path('plm/management/', include('Management.urls')),  # , namespace='management'
+    path('plm/user/', include('User.urls')),  #  , namespace='user'
 
 
 

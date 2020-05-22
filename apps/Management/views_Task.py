@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
-from Management import models, utils
-import datetime
+from apps.Management import utils, models
 import json,os
 
 
@@ -47,16 +46,6 @@ def task_by_prj(request):
         sources_string += source + ','
     sources_string += "]"
     # print(sources_string)
-    """join table for itself
-    for task in tasks:
-        print("-", task.task_name, task.id)
-        if task.parenttask:
-            for ctask in task.parenttask.all():
-                print("---", ctask.task_name, ctask.id)
-                if ctask.parenttask:
-                    for cctask in ctask.parenttask.all():
-                        print("-------", cctask.task_name, cctask.id)
-    """
 
     return render(request, "management/Task/task_by_prj.html", {"tasks": tasks, "project": project, "gantt_sources":sources_string})
 

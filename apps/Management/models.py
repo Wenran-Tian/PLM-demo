@@ -108,3 +108,8 @@ class FilePath(models.Model):
     parent_prob = models.ForeignKey("Problem", null=True, on_delete=models.CASCADE)
 
 
+""" do not forget this: 
+python manage.py makemigrations
+python manage.py migrate
+
+"""
