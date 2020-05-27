@@ -18,6 +18,7 @@ urlpatterns = [
     path('project/add/', views_Prj.prj_add),
     path('project/del/', views_Prj.prj_del),
     path('project/edit/', views_Prj.prj_edit),
+    path('project/data/', views_Prj.prj_data),
 
     path('task/select_by_prj/', views_Task.select_by_prj),
     path('task/task_by_prj/', views_Task.task_by_prj),

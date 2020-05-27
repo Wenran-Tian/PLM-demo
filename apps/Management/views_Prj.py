@@ -1,5 +1,5 @@
 from django.shortcuts import render,HttpResponse,redirect
-from apps.Management import models
+from apps.Management import models,utils
 import time
 import json
 from functools import wraps
@@ -83,7 +83,8 @@ def prj_edit(request):
         # print(ep)
         persons = models.personnel.objects.all()
         time_list = [str(project["start_time"]), str(project["end_time"])]
-        return render(request, 'management/Project/prj_edit.html', {"project": project, "persons": persons, "conditions": models.CONDITION_LIST, "time_list": time_list})
+        return render(request, 'management/Project/prj_edit.html', {"project": project, "persons": persons, "conditions": models.CONDITION_LIST, "time_list": time_list, "conditions_dict": models.CONDITION_DICT,
+                                                                    "nowCondition": models.CONDITION_LIST[project["condition"]]})
     else:
         np = {}
         np["prj_name"] = request.POST.get("prj_name")
@@ -96,7 +97,7 @@ def prj_edit(request):
 
         except:
             np["prj_budget"] = 0
-        np["status"] = request.POST.get("status")
+        np["condition"] = int(models.CONDITION_DICT[request.POST.get("condition")])
         np["created_by_id"] = request.POST.get("created_by_id")
         np["managed_by_id"] = request.POST.get("managed_by_id")
         np["statement"] = request.POST.get("statement")
@@ -107,3 +108,41 @@ def prj_edit(request):
         # print(np)
         models.Project.objects.filter(prj_id=op_id).update(**np)
         return redirect("/plm/management/project/")
+
+
+def prj_data(request):
+    if request.method == "GET":
+        data = {}
+        data["labels"] = []
+        data["colors"] = []
+        data["counts"] = []
+        for i in range(7):
+            count = models.Project.objects.filter(condition=i).count()
+            if count != 0:
+                data["labels"].append(models.CONDITION_LIST[i])
+                data["counts"].append(count)
+                data["colors"].append(models.CONDITION_COLOR_16[i])
+            data["length"] = len(data["labels"])
+
+        prjs = models.Project.objects.order_by("start_time")
+        times_prjs = {}
+        for prj in prjs:
+            time_series = utils.get_month_range(prj.start_time, prj.end_time)
+            for time in time_series:
+                if time in times_prjs:
+                    times_prjs[time] += 1
+                else:
+                    times_prjs[time] = 1
+
+        data["months"] = []
+        for key in times_prjs.keys():
+            data["months"].append(key)
+        data["prjs"] = []
+        for value in times_prjs.values():
+            data["prjs"].append(value)
+
+        # print(data)
+        return HttpResponse(json.dumps(data))
+
+
+

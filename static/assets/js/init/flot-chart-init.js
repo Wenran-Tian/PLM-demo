@@ -152,22 +152,22 @@
         var data = [
             {
                 label: " Data 1",
-                data: 2,
+                data: 3,
                 color: "#8fc9fb"
             },
             {
                 label: " Data 2",
-                data: 4,
+                data: 3,
                 color: "#007BFF"
             },
             {
                 label: " Data 3",
-                data: 7,
+                data: 3,
                 color: "#00c292"
             },
             {
                 label: " Data 4",
-                data: 15,
+                data: 3,
                 color: "#F44336"
             },
             {
@@ -367,12 +367,12 @@
 };
 
 $(document).ready(function() {
-    SufeeAdmin.cpuLoad();
-    SufeeAdmin.lineFlot();
+    //SufeeAdmin.cpuLoad();
+    //SufeeAdmin.lineFlot();
     SufeeAdmin.pieFlot();
-    SufeeAdmin.line2Flot();
-    SufeeAdmin.barFlot();
-    SufeeAdmin.plotting();
+    //SufeeAdmin.line2Flot();
+    //SufeeAdmin.barFlot();
+    //SufeeAdmin.plotting();
 
 });
 

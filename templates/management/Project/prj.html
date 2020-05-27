@@ -3,7 +3,7 @@
 {% block head %}
     <title>天控五轴PLM-项目管理</title>
     <style>
-         .hide {
+        .hide {
             display: none;
         }
         .shadow {
@@ -16,7 +16,6 @@
             opacity: 0.4;
             z-index: 999;
         }
-
         .loading {
             position: fixed;
             top: 50%;
@@ -45,91 +44,87 @@
 
 {% block content %}
 
-{#    <div class="breadcrumbs" style="top:20px">#}
-{#            <div class="breadcrumbs-inner">#}
-{#                <div class="row m-0">#}
-{#                    <div class="col-sm-4">#}
-{#                        <div class="page-header float-left">#}
-{#                            <div class="page-title">#}
-{#                                <h1>人员列表</h1>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <div class="col-sm-8">#}
-{#                        <div class="page-header float-right">#}
-{#                            <div class="page-title">#}
-{#                                <ol class="breadcrumb text-right">#}
-{#                                    <li><a href="#">人员列表</a></li>#}
-{#                                    <li><a href="#">人事</a></li>#}
-{#                                    <li class="active">天控五轴PLM</li>#}
-{#                                </ol>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-
-
     <a type="button" href="/plm/management/project/add/" style="margin: 5px" class="btn btn-outline-primary">添加项目</a>
 
     <table class="table table-bordered table-striped table-hover">
-    <tr>
-        <th><a href="/plm/management/prj?index=prj_id" class = "btn-outline-secondary btn-sm">项目编号</a></th>
-        <th><a class = "btn-outline-secondary btn-sm">项目名称</a></th>
-        <th><a class = "btn-outline-secondary btn-sm">负责人</a></th>
-        <th><a class = "btn-outline-secondary btn-sm">计划开始日期</a></th>
-        <th><a class = "btn-outline-secondary btn-sm">计划完成日期</a></th>
-{#        <th><a class = "btn-outline-secondary btn-sm">项目预算</a></th>#}
-{#        <th><a class = "btn-outline-secondary btn-sm">项目创建时间</a></th>#}
-        <th><a class = "btn-outline-secondary btn-sm">创建人</a></th>
-        <th><a class = "btn-outline-secondary btn-sm">产品型号</a></th>
-{#        <th><a class = "btn-outline-secondary btn-sm">阶段</a></th>#}
-        <th><a class = "btn-outline-secondary btn-sm">执行情况</a></th>
-        <th><a class = "btn-outline-secondary btn-sm">问题说明</a></th>
-        <th>操作</th>
-        {% for project in prjdata %}
-            <tr>
-                <td>{{ project.prj_id }}</td>
-                <td>
-                    <a href="/plm/management/task/task_by_prj?pid={{ project.id }}" class="btn-outline-secondary">{{ project.prj_name }}</a>
-                </td>
-
-
-
-                <td>{{ project.managed_by.name }}</td>
-                <td>{{ project.start_time.year}}-{{ project.start_time.month}}-{{ project.start_time.day}}</td>
-                <td>{{ project.end_time.year }}-{{ project.end_time.month }}-{{ project.end_time.day }}</td>
-{#                <td>{{ project.prj_budget }}</td><td>{{ project.created_date }}</td>#}
-                <td>{{ project.created_by.name }}</td><td>{{ project.product_model }}</td>
-{#                <td> {{ project.status }}</td>#}
-{#                <td></td>#}
+        <tr>
+            <th><a href="/plm/management/prj?index=prj_id" class="btn-outline-secondary btn-sm">项目编号</a></th>
+            <th><a class="btn-outline-secondary btn-sm">项目名称</a></th>
+            <th><a class="btn-outline-secondary btn-sm">负责人</a></th>
+            <th><a class="btn-outline-secondary btn-sm">计划开始日期</a></th>
+            <th><a class="btn-outline-secondary btn-sm">计划完成日期</a></th>
+            {#        <th><a class = "btn-outline-secondary btn-sm">项目预算</a></th>#}
+            {#        <th><a class = "btn-outline-secondary btn-sm">项目创建时间</a></th>#}
+            <th><a class="btn-outline-secondary btn-sm">创建人</a></th>
+            <th><a class="btn-outline-secondary btn-sm">产品型号</a></th>
+            {#        <th><a class = "btn-outline-secondary btn-sm">阶段</a></th>#}
+            <th><a class="btn-outline-secondary btn-sm">执行情况</a></th>
+            <th><a class="btn-outline-secondary btn-sm">问题说明</a></th>
+            <th>操作</th>
+            {% for project in prjdata %}
+                <tr>
+                    <td>{{ project.prj_id }}</td>
+                    <td>
+                        <a href="/plm/management/task/task_by_prj?pid={{ project.id }}"
+                           class="btn-outline-secondary">{{ project.prj_name }}</a>
+                    </td>
+                    <td>{{ project.managed_by.name }}</td>
+                    <td>{{ project.start_time.year }}-{{ project.start_time.month }}-{{ project.start_time.day }}</td>
+                    <td>{{ project.end_time.year }}-{{ project.end_time.month }}-{{ project.end_time.day }}</td>
+                    {#                <td>{{ project.prj_budget }}</td><td>{{ project.created_date }}</td>#}
+                    <td>{{ project.created_by.name }}</td>
+                    <td>{{ project.product_model }}</td>
+                    {#                <td> {{ project.status }}</td>#}
+                    {#                <td></td>#}
                     {% if project.condition == 0 %}
-                        <td style="background-color: lightgrey">未开始</td>
+                        <td style="background-color: #d3d3d3">未开始</td>
                     {% elif project.condition == 1 %}
-                        <td style="background-color:royalblue">进行中</td>
+                        <td style="background-color:#4169e1">进行中</td>
                     {% elif project.condition == 2 %}
-                        <td style="background-color: yellow">延期</td>
+                        <td style="background-color: #ffff00">预警</td>
                     {% elif project.condition == 3 %}
-                        <td style="background-color: orange">延误</td>
+                        <td style="background-color: #ffa500">延期</td>
                     {% elif project.condition == 4 %}
-                        <td style="background-color: red">取消</td>
+                        <td style="background-color: #ff0000">取消</td>
                     {% elif project.condition == 5 %}
-                        <td style="background-color:springgreen">完成</td>
+                        <td style="background-color:#2fff00">完成</td>
                     {% else %}
-                        <td style="background-color: green">延期完成</td>
+                        <td style="background-color: #008000">延期完成</td>
                     {% endif %}
 
-                <td>{{ project.remark }}</td>
-                <td>
-                    <a class="btn btn-outline-success" href="/plm/management/project/edit?prj_id={{ project.prj_id }}" >编辑</a> | <a class="dia_del btn btn-outline-secondary">删除</a>
-                </td>
-            </tr>
-        {% endfor %}
+                    <td>{{ project.remark }}</td>
+                    <td>
+                        <a class="btn btn-outline-success"
+                           href="/plm/management/project/edit?prj_id={{ project.prj_id }}">编辑</a> | <a
+                            class="dia_del btn btn-outline-secondary">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
 
-    </tr>
+        </tr>
     </table>
 
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-3">项目执行情况分布</h4>
+                    <div class="flot-container">
+                        <div id="flot-pie" class="flot-pie-container"></div>
+                    </div>
+                </div>
+            </div><!-- /# card -->
+        </div><!-- /# column -->
+
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-3">项目时间分布 </h4>
+                    <canvas id="singelBarChart"></canvas>
+                </div>
+            </div>
+        </div><!-- /# column -->
+    </div><!-- /# row -->
 
     <div id="shadow" class="shadow hide"></div>
     <div id="loading" class="loading hide"></div>
@@ -137,14 +132,28 @@
         <p style="margin: 10px; text-align: center; top:20px">您确认要删除 <input id="delname" readonly="true"/>？</p>
         {% csrf_token %}
         <p>
-            <input class="btn" style="display: none" id="delpid" >
-            <input class="btn btn-outline-secondary btn-flat" value="删 除" id="delbtn" type="button" style="position:relative; left: 20px; top: 40px">
-            <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button" style="position:relative; left: 225px; top: 40px">
+            <input class="btn" style="display: none" id="delpid">
+            <input class="btn btn-outline-secondary btn-flat" value="删 除" id="delbtn" type="button"
+                   style="position:relative; left: 20px; top: 40px">
+            <input class="btn btn-outline-success btn-flat" value="取 消" onclick="Cancel();" type="button"
+                   style="position:relative; left: 225px; top: 40px">
         </p>
     </div>
+
 {% endblock %}
 
 {% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/flot-charts@0.8.3/excanvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flot-charts@0.8.3/jquery.flot.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.pie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.time.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.stack.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.resize.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.crosshair.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flot.curvedlines@1.1.1/curvedLines.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.flot.tooltip@0.9.0/js/jquery.flot.tooltip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
+{#    <script src="/static/assets/js/init/flot-chart-init.js?v=2"></script>#}
     <script>
         $(function () {
             $('.dia_del').click(function () {
@@ -158,23 +167,102 @@
             $('#delbtn').click(function () {
                 let csrf = $('input[name="csrfmiddlewaretoken"]').val();
                 $.ajax({
-                    url : "/plm/management/project/del/",
-                    type : "POST",
-                    data : {'prj_id':$('#delpid').val(),'csrfmiddlewaretoken': csrf},
-                    dataType : 'JSON',
-                    success:function (arg) {
-                        if(arg.status){
+                    url: "/plm/management/project/del/",
+                    type: "POST",
+                    data: {'prj_id': $('#delpid').val(), 'csrfmiddlewaretoken': csrf},
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if (arg.status) {
                             location.reload()
                         }
                     }
                 })
             })
+//            $('#flot-pie')
         });
+
         function Cancel() {
             $('#shadow, #diaDel').addClass('hide')
         }
 
+        var projectStatues;
+        $.ajax({
+            url: "/plm/management/project/data/",
+            type: 'GET',
+            dataType: 'JSON',
+            success: function (updData) {
+                {#projectStatues = updData.values;#}
+                //alert(updData);
+                // alert([ 0, 0, 15, 110, 50, 63, 23, 23, 55]);
+                // $('#tagflag').val(saleschartdata0[0])
 
+                //data.push(data[1]);
+                //data.concat(data[1]);
+
+                var data = [];
+                console.log(data);
+                let s = [];
+                for (let i = 0; i < updData.length; i++) {
+                    s = {
+                        label: updData.labels[i],
+                        data: updData.counts[i],
+                        color: updData.colors[i]
+                    };
+                    data.push(s)
+                }
+
+                var plotObj = $.plot($("#flot-pie"), data, {
+                    series: {
+                        pie: {
+                            show: true,
+                            radius: 1,
+                            label: {
+                                show: false,
+                            }
+                        }
+                    },
+                    grid: {
+                        hoverable: true
+                    },
+                    tooltip: {
+                        show: true,
+                        content: "%p.0%, %s, n=%n", // show percentages, rounding to 2 decimal places
+                        shifts: {
+                            x: 20,
+                            y: 0
+                        },
+                        defaultTheme: false
+                    }
+                });
+
+                // single bar chart
+                var ctx = document.getElementById( "singelBarChart" );
+                ctx.height = 91;
+                var myChart = new Chart( ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: updData.months,  //, "Wed", "Th", "Fri", "Sat"
+                        datasets: [
+                            {
+                                label: "单月涉及项目数",
+                                data: updData.prjs, //, 80, 56, 55, 23
+                                borderColor: "rgba(0, 194, 146, 0.9)",
+                                borderWidth: "0",
+                                backgroundColor: "rgba(0, 194, 146, 0.5)"
+                                        }
+                                    ]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [ {
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            } ]
+                        }
+                    }
+                } );
+            }
+        });
     </script>
-
 {% endblock %}

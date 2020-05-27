@@ -42,7 +42,20 @@
         </p>
         <p>开始时间：<input type="date" name="start_time" value="{{ time_list.0 }}">  结束时间：<input type="date" name="end_time" value="{{ time_list.1 }}"></p>
 
-        <p>项目预算：<input type="number" name="prj_budget" step="0.01" value="{{ project.prj_budget }}">  状态：<input type="text" value="{{ project.status }}" name="status"/></p>
+        <p>项目预算：<input type="number" name="prj_budget" step="0.01" value="{{ project.prj_budget }}">
+{#            状态：<input type="text" value="{{ project.status }}" name="status"/>#}
+            状态：<select name="condition">
+                {% for condition_name in conditions %}
+                    {% if nowCondition == condition_name %}
+                        <option value="{{ condition_name }}" selected>{{ condition_name }}</option>
+                    {% else %}
+                        <option value="{{ condition_name }}">{{ condition_name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+
+        </p>
         <p>阶段备注：</p>
         <p><textarea name="remark" rows="3" cols="150" id = "ta1"> {{ project.remark }}</textarea></p>
         <p>项目说明：</p>

@@ -40,7 +40,7 @@ class Project(models.Model):
     prj_budget = models.DecimalField(max_digits=15, decimal_places=2, default=0, null=True)
     status = models.CharField(max_length=32, default="预备", null=True)
 
-    choice_list = ((0, "未开始"), (1, "进行中"), (2, "延期"), (3, "延误"), (4, "取消"), (5, "完成"), (6, "延期完成"))
+    choice_list = ((0, "未开始"), (1, "进行中"), (2, "预警"), (3, "延期"), (4, "取消"), (5, "完成"), (6, "延期完成"))
     condition = models.IntegerField(choices=choice_list, null=True, default=0)
     remark = models.CharField(max_length=200, default="暂无", null=True)
 
@@ -52,6 +52,7 @@ class Project(models.Model):
 
 CONDITION_LIST = ["未开始", "进行中", "预警", "延期", "取消", "完成", "延期完成"]
 CONDITION_DICT = {"未开始": 0, "进行中": 1, "预警": 2, "延期": 3, "取消": 4, "完成": 5, "延期完成": 6}
+CONDITION_COLOR_16 = ["#d3d3d3", "#4169e1", "#ffff00", "#ffa500", "#ff0000", "#2fff00", "#008000"]
 
 CONDITION_PROB_LIST = ["未解决", "进行中", "预警", "延期", "取消", "已解决", "延期已解决"]
 CONDITION_PROB_DICT = {"未解决": 0, "进行中": 1, "预警": 2, "延期": 3, "取消": 4, "已解决": 5, "延期已解决": 6}
