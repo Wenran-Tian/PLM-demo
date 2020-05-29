@@ -179,124 +179,74 @@
         </div>
     </div>
 
-{#    <div class="fixed">#}
-{#        <table class="table table-bordered table-striped table-hover">  {#  #}
-{#            <tr>#}
-{#                <th><a href="/plm/management/prj?index=prj_id" class="btn-outline-secondary btn-sm">项目编号</a></th>#}
-{#                <th><a class="btn-outline-secondary btn-sm">项目名称</a></th>#}
-{#                <th><a class="btn-outline-secondary btn-sm">负责人</a></th>#}
-{#                <th><a class="btn-outline-secondary btn-sm">计划开始日期</a></th>#}
-{#                <th><a class="btn-outline-secondary btn-sm">计划完成日期</a></th>#}
-                {#        <th><a class = "btn-outline-secondary btn-sm">项目预算</a></th>#}
-                {#        <th><a class = "btn-outline-secondary btn-sm">项目创建时间</a></th>#}
-{#                <th><a class="btn-outline-secondary btn-sm">创建人</a></th>#}
-{#                <th><a class="btn-outline-secondary btn-sm">产品型号</a></th>#}
-                {#            <th><a class="btn-outline-secondary btn-sm">阶段</a></th>#}
-{#                <th><a class="btn-outline-secondary btn-sm">执行情况</a></th>#}
-{#                <th><a class="btn-outline-secondary btn-sm">问题说明</a></th>#}
-{#                <th>操作</th>#}
-{#            <tr>#}
-{#                <td>{{ project.prj_id }}</td>#}
-{#                <td>{{ project.prj_name }}</td>#}
-{#                <td>{{ project.managed_by.name }}</td>#}
-{#                <td>{{ project.start_time.year }}-{{ project.start_time.month }}-{{ project.start_time.day }}</td>#}
-{#                <td>{{ project.end_time.year }}-{{ project.end_time.month }}-{{ project.end_time.day }}</td>#}
-                {#                <td>{{ project.prj_budget }}</td><td>{{ project.created_date }}</td>#}
-{#                <td>{{ project.created_by.name }}</td>#}
-{#                <td>{{ project.product_model }}</td>#}
-                {#            <td> {{ project.status }}</td>#}
-                {#            <td></td>#}
-{#                {% if project.condition == 0 %}#}
-{#                    <td style="background-color: lightgrey">未开始</td>#}
-{#                {% elif project.condition == 1 %}#}
-{#                    <td style="background-color:royalblue">进行中</td>#}
-{#                {% elif project.condition == 2 %}#}
-{#                    <td style="background-color: yellow">延期</td>#}
-{#                {% elif project.condition == 3 %}#}
-{#                    <td style="background-color: orange">延误</td>#}
-{#                {% elif project.condition == 4 %}#}
-{#                    <td style="background-color: red">取消</td>#}
-{#                {% elif project.condition == 5 %}#}
-{#                    <td style="background-color:springgreen">完成</td>#}
-{#                {% else %}#}
-{#                    <td style="background-color: green">延期完成</td>#}
-{#                {% endif %}#}
-{##}
-{#                <td>{{ project.remark }}</td>#}
-{#                <td>#}
-{#                    <a class="btn btn-outline-success" href="/plm/management/project/edit?prj_id={{ project.prj_id }}">编辑</a>#}
-{#                </td>#}
-{#            </tr>#}
-{#            </tr>#}
-{#        </table>#}
-{#    </div>#}
+
     <div class="clearfix"></div>
     <div class="fixed col-xl-12 ">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="box-title">项目属性 </h4>
-                    </div>
-                    <div class="card-body--">
-                        <div class="table-stats order-table ov-h">
-                            <table class="table ">
-                                <thead>
-                                <tr>
-                                    <th><a href="/plm/management/prj?index=prj_id" class="btn-outline-secondary btn-sm">项目编号</a>
-                                    </th>
-                                    <th><a class="btn-outline-secondary btn-sm">项目名称</a></th>
-                                    <th><a class="btn-outline-secondary btn-sm">负责人</a></th>
-                                    <th><a class="btn-outline-secondary btn-sm">计划开始日期</a></th>
-                                    <th><a class="btn-outline-secondary btn-sm">计划完成日期</a></th>
-                                    {#        <th><a class = "btn-outline-secondary btn-sm">项目预算</a></th>#}
-                                    {#        <th><a class = "btn-outline-secondary btn-sm">项目创建时间</a></th>#}
-                                    <th><a class="btn-outline-secondary btn-sm">创建人</a></th>
-                                    <th><a class="btn-outline-secondary btn-sm">产品型号</a></th>
-                                    {#            <th><a class="btn-outline-secondary btn-sm">阶段</a></th>#}
-                                    <th><a class="btn-outline-secondary btn-sm">执行情况</a></th>
-                                    <th><a class="btn-outline-secondary btn-sm">问题说明</a></th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>{{ project.prj_id }}</td>
-                                    <td>{{ project.prj_name }}</td>
-                                    <td>{{ project.managed_by.name }}</td>
-                                    <td>{{ project.start_time.year }}-{{ project.start_time.month }}-{{ project.start_time.day }}</td>
-                                    <td>{{ project.end_time.year }}-{{ project.end_time.month }}-{{ project.end_time.day }}</td>
-                                    {#                <td>{{ project.prj_budget }}</td><td>{{ project.created_date }}</td>#}
-                                    <td>{{ project.created_by.name }}</td>
-                                    <td>{{ project.product_model }}</td>
-                                    {#            <td> {{ project.status }}</td>#}
-                                    {#            <td></td>#}
-                                    {% if project.condition == 0 %}
-                                        <td style="background-color: lightgrey">未开始</td>
-                                    {% elif project.condition == 1 %}
-                                        <td style="background-color:royalblue">进行中</td>
-                                    {% elif project.condition == 2 %}
-                                        <td style="background-color: yellow">延期</td>
-                                    {% elif project.condition == 3 %}
-                                        <td style="background-color: orange">延误</td>
-                                    {% elif project.condition == 4 %}
-                                        <td style="background-color: red">取消</td>
-                                    {% elif project.condition == 5 %}
-                                        <td style="background-color:springgreen">完成</td>
-                                    {% else %}
-                                        <td style="background-color: green">延期完成</td>
-                                    {% endif %}
+        <div class="card">
+            <div class="card-body">
+                <h4 class="box-title">项目属性 </h4>
+            </div>
+            <div class="card-body--">
+                <div class="table-stats order-table ov-h">
+                    <table class="table ">
+                        <thead>
+                        <tr>
+                            <th><a href="/plm/management/prj?index=prj_id" class="btn-outline-secondary btn-sm">项目编号</a>
+                            </th>
+                            <th><a class="btn-outline-secondary btn-sm">项目名称</a></th>
+                            <th><a class="btn-outline-secondary btn-sm">负责人</a></th>
+                            <th><a class="btn-outline-secondary btn-sm">计划开始日期</a></th>
+                            <th><a class="btn-outline-secondary btn-sm">计划完成日期</a></th>
+                            {#        <th><a class = "btn-outline-secondary btn-sm">项目预算</a></th>#}
+                            {#        <th><a class = "btn-outline-secondary btn-sm">项目创建时间</a></th>#}
+                            <th><a class="btn-outline-secondary btn-sm">创建人</a></th>
+                            <th><a class="btn-outline-secondary btn-sm">产品型号</a></th>
+                            {#            <th><a class="btn-outline-secondary btn-sm">阶段</a></th>#}
+                            <th><a class="btn-outline-secondary btn-sm">执行情况</a></th>
+                            <th><a class="btn-outline-secondary btn-sm">问题说明</a></th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{{ project.prj_id }}</td>
+                            <td>{{ project.prj_name }}</td>
+                            <td>{{ project.managed_by.name }}</td>
+                            <td>{{ project.start_time.year }}-{{ project.start_time.month }}-{{ project.start_time.day }}</td>
+                            <td>{{ project.end_time.year }}-{{ project.end_time.month }}-{{ project.end_time.day }}</td>
+                            {#                <td>{{ project.prj_budget }}</td><td>{{ project.created_date }}</td>#}
+                            <td>{{ project.created_by.name }}</td>
+                            <td>{{ project.product_model }}</td>
+                            {#            <td> {{ project.status }}</td>#}
+                            {#            <td></td>#}
+                            {% if project.condition == 0 %}
+                                <td style="background-color: lightgrey">未开始</td>
+                            {% elif project.condition == 1 %}
+                                <td style="background-color:royalblue">进行中</td>
+                            {% elif project.condition == 2 %}
+                                <td style="background-color: yellow">延期</td>
+                            {% elif project.condition == 3 %}
+                                <td style="background-color: orange">延误</td>
+                            {% elif project.condition == 4 %}
+                                <td style="background-color: red">取消</td>
+                            {% elif project.condition == 5 %}
+                                <td style="background-color:springgreen">完成</td>
+                            {% else %}
+                                <td style="background-color: green">延期完成</td>
+                            {% endif %}
 
-                                    <td>{{ project.remark }}</td>
-                                    <td>
-                                        <a class="btn btn-outline-success"
-                                           href="/plm/management/project/edit?prj_id={{ project.prj_id }}">编辑</a>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div> <!-- /.table-stats -->
-                    </div>
-                </div> <!-- /.card -->
-            </div>  <!-- /.col-lg-8 -->
+                            <td>{{ project.remark }}</td>
+                            <td>
+                                <a class="btn btn-outline-success"
+                                   href="/plm/management/project/edit?prj_id={{ project.prj_id }}">编辑</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div> <!-- /.table-stats -->
+            </div>
+        </div> <!-- /.card -->
+    </div>  <!-- /.col-lg-8 -->
 
 
 

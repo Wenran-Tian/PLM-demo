@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 # Human Resource database
 
+
 class users(models.Model):
     user = models.CharField(max_length=32, unique=True)
     pwd = models.CharField(max_length=64)
@@ -114,3 +115,7 @@ python manage.py makemigrations
 python manage.py migrate
 
 """
+
+prjChartsData = {}
+taskChartsData = {}
+

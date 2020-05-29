@@ -60,6 +60,7 @@ def prj_add(request):
         strid = str(lp.id)
         print('PRJ' + '0'*(5-len(strid)) + strid)
         models.Project.objects.filter(id=lp.id).update(prj_id='PRJ' + '0' * (5 - len(strid)) + strid)
+        utils.update_prj_charts()
     return redirect('/plm/management/project/')
 
 
@@ -70,6 +71,7 @@ def prj_del(request):
     # print("---------------------")
     # print(prj_id)
     models.Project.objects.filter(prj_id=prj_id).delete()
+    utils.update_prj_charts()
     return HttpResponse(json.dumps(ret))
 
 
@@ -107,42 +109,15 @@ def prj_edit(request):
         # print(op_id)
         # print(np)
         models.Project.objects.filter(prj_id=op_id).update(**np)
+        utils.update_prj_charts()
         return redirect("/plm/management/project/")
 
 
 def prj_data(request):
     if request.method == "GET":
-        data = {}
-        data["labels"] = []
-        data["colors"] = []
-        data["counts"] = []
-        for i in range(7):
-            count = models.Project.objects.filter(condition=i).count()
-            if count != 0:
-                data["labels"].append(models.CONDITION_LIST[i])
-                data["counts"].append(count)
-                data["colors"].append(models.CONDITION_COLOR_16[i])
-            data["length"] = len(data["labels"])
-
-        prjs = models.Project.objects.order_by("start_time")
-        times_prjs = {}
-        for prj in prjs:
-            time_series = utils.get_month_range(prj.start_time, prj.end_time)
-            for time in time_series:
-                if time in times_prjs:
-                    times_prjs[time] += 1
-                else:
-                    times_prjs[time] = 1
-
-        data["months"] = []
-        for key in times_prjs.keys():
-            data["months"].append(key)
-        data["prjs"] = []
-        for value in times_prjs.values():
-            data["prjs"].append(value)
-
         # print(data)
-        return HttpResponse(json.dumps(data))
+        return HttpResponse(json.dumps(models.prjChartsData))
+
 
 
 

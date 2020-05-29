@@ -83,7 +83,7 @@
     <form action="/plm/management/project/inspect/" method="POST">
         {% csrf_token %}
         <a type="button" href="/plm/management/task/edit?tid={{ task.id }}" class="btn btn-outline-primary">编辑属性</a>
-        <a type="button" href=" /plm/management/task/task_by_prj?pid={{ task.parent_project.id }}" class="btn btn-outline-secondary">返回</a>
+        <a type="button"  href="#" onClick=" history.back(-1);" class="btn btn-outline-secondary">返回</a>
         &#160;&#160;
         &#160;&#160;
         &#160;&#160;

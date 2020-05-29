@@ -18,12 +18,11 @@ def task_by_prj(request):
         if request.POST.get("update"):
             # print("condition 123")
             utils.auto_condition_update(id)
+            utils.update_task_charts()
             ret = {"status": True, "msg": None}
             return HttpResponse(json.dumps(ret))
 
     project = models.Project.objects.filter(id=id).prefetch_related("managed_by").first()
-
-
     tasks = models.Task.objects.filter(parent_project_id=id, parent_task=None).prefetch_related("parent_task")
     gantt_tasks = models.Task.objects.filter(parent_project_id=id).order_by("task_name").prefetch_related('principle')
     sources_string = "["
@@ -114,7 +113,7 @@ def task_add(request):
         except:
             nt["task_budget"] = 0
 
-        print(type(request.POST.get("parent_task_id")))
+        #print(type(request.POST.get("parent_task_id")))
         try:
             nt["parent_task_id"] = int(request.POST.get("parent_task_id"))
         except:
@@ -128,6 +127,7 @@ def task_add(request):
         ntask = models.Task.objects.latest('id')
         models.PersonToTask.objects.create(remark="负责人", task_id=ntask.id, person_id=ntask.principle_id)
 
+        utils.update_task_charts()
         url = (f"""/plm/management/task/task_by_prj?pid={parent_project_id}""")
     return redirect(url)
     # return HttpResponse("123456")
@@ -139,6 +139,7 @@ def task_del(request):
     task = models.Task.objects.filter(id=task_id).prefetch_related("parent_project").first()
     project_id = task.parent_project.id
     models.Task.objects.filter(id=task_id).delete()
+    utils.update_task_charts()
     url = f"""/plm/management/task/task_by_prj?pid={project_id}"""
     return redirect(url)
 
@@ -191,7 +192,7 @@ def task_edit(request):
             models.PersonToTask.objects.filter(remark="负责人", task_id=task_id).update(person_id=nt["principle_id"])
 
         models.Task.objects.filter(id=task_id).update(**nt)
-
+        utils.update_task_charts()
         url = (f"""/plm/management/task/task_by_prj?pid={parent_project_id}""")
     return redirect(url)
 
@@ -242,21 +243,35 @@ def select_by_person(request):
 
 
 def task_by_person(request):
-    pid = request.GET.get("pid")
-    person = models.personnel.objects.filter(id=pid).first()
-    # ptt = models.PersonToTask.objects.filter(person_id=pid).order_by('task__condition', 'task__parent_project', 'task__task_name').prefetch_related("task", "task__parent_project", "person")
-    ptt_executing = models.PersonToTask.objects.filter(person_id=pid, task__condition__gt=0, task__condition__lt=4).order_by('task__parent_project', 'task__task_name').prefetch_related("task", "task__parent_project", "person")
-    ptt_notstart = models.PersonToTask.objects.filter(person_id=pid, task__condition=0).order_by(
-        'task__parent_project', 'task__task_name').prefetch_related("task", "task__parent_project", "person")
-    ptt_finished = models.PersonToTask.objects.filter(person_id=pid, task__condition__gt=3).order_by(
-        'task__parent_project', 'task__task_name').prefetch_related("task", "task__parent_project", "person")
+    if request.method == "GET":
+        pid = request.GET.get("pid")
+        person = models.personnel.objects.filter(id=pid).first()
+        ptt = models.PersonToTask.objects.filter(person_id=pid).prefetch_related("task", "task__parent_project", "person")
+        ptt_executing = ptt.filter(person_id=pid, task__condition__gt=0, task__condition__lt=4).order_by('task__parent_project', 'task__task_name')
+        ptt_notstart = ptt.filter(person_id=pid, task__condition=0).order_by('task__parent_project', 'task__task_name')
+        ptt_finished = ptt.filter(person_id=pid, task__condition__in=[5, 6]).order_by('task__parent_project', 'task__task_name')
+        return render(request, "management/Task/task_by_person.html", {"person": person,
+                                                                       "ptt_executings": ptt_executing,
+                                                                       "ptt_notstarts": ptt_notstart,
+                                                                       "ptt_finisheds": ptt_finished,
+                                                                       })
+    else:
+        pid = int(request.POST.get("pid"))
+        ptt = models.PersonToTask.objects.filter(person_id=pid).prefetch_related("task", "task__parent_project",
+                                                                                 "person")
+        data = {}
+        data["labels"] = []
+        data["counts"] = []
+        data["colors"] = []
+        for i in range(len(models.CONDITION_LIST)):
+            count = ptt.filter(task__condition=i).count()
+            if count != 0:
+                data["labels"].append(models.CONDITION_LIST[i])
+                data["counts"].append(count)
+                data["colors"].append(models.CONDITION_COLOR_16[i])
+            data["length"] = len(data["labels"])
 
-    # print(ptt)
-    return render(request, "management/Task/task_by_person.html", {"person": person,
-                                                                   "ptt_executings": ptt_executing,
-                                                                   "ptt_notstarts": ptt_notstart,
-                                                                   "ptt_finisheds": ptt_finished,
-                                                                   })
+        return HttpResponse(json.dumps(data))
 
 
 def add_prob(request):
@@ -329,8 +344,6 @@ def upload(request):
     newFP["parent_project_id"] = parent_project_id
 
     models.FilePath.objects.create(**newFP)
-
-
     # destination=open(os.path.join('upload',myFile.name),'wb+')
 
     try:

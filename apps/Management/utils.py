@@ -104,9 +104,98 @@ def auto_condition_update(project_id):
 
 
 def get_month_range(start_day,end_day):
+    """
+    :param start_day:
+    :param end_day:
+    :return: a list of string of months between start_day and end_day
+    """
     months = (end_day.year - start_day.year)*12 + end_day.month - start_day.month
     month_range = ['%s-%s'%(start_day.year + mon//12,mon%12+1)
                     for mon in range(start_day.month-1,start_day.month + months)]
     return month_range
 
 
+def update_prj_charts():
+    data = {}
+    data["labels"] = []
+    data["colors"] = []
+    data["counts"] = []
+    for i in range(len(models.CONDITION_LIST)):
+        count = models.Project.objects.filter(condition=i).count()
+        if count != 0:
+            data["labels"].append(models.CONDITION_LIST[i])
+            data["counts"].append(count)
+            data["colors"].append(models.CONDITION_COLOR_16[i])
+        data["length"] = len(data["labels"])
+
+    prjs = models.Project.objects.order_by("start_time")
+    times_prjs = {}
+    for prj in prjs:
+        time_series = get_month_range(prj.start_time, prj.end_time)
+        for time in time_series:
+            if time in times_prjs:
+                times_prjs[time] += 1
+            else:
+                times_prjs[time] = 1
+
+    data["months"] = []
+    for key in times_prjs.keys():
+        data["months"].append(key)
+    data["prjs"] = []
+    for value in times_prjs.values():
+        data["prjs"].append(value)
+
+    models.prjChartsData = data
+
+
+def update_task_charts():
+    data = {}
+    data["labels"] = []
+    data["colors"] = []
+    data["counts"] = []
+    for i in range(7):
+        count = models.Task.objects.filter(condition=i).count()
+        if count != 0:
+            data["labels"].append(models.CONDITION_LIST[i])
+            data["counts"].append(count)
+            data["colors"].append(models.CONDITION_COLOR_16[i])
+        data["length"] = len(data["labels"])
+
+    tasks = models.Task.objects.order_by("t_start_time")
+    times_tasks = {}
+    for task in tasks:
+        time_series = get_month_range(task.t_start_time, task.t_end_time)
+        for time in time_series:
+            if time in times_tasks:
+                times_tasks[time] += 1
+            else:
+                times_tasks[time] = 1
+
+    data["months"] = []
+    for key in times_tasks.keys():
+        data["months"].append(key)
+    data["tasks"] = []
+    for value in times_tasks.values():
+        data["tasks"].append(value)
+
+    # data["dep_condition"] = []
+    # persons = models.personnel.objects.order_by("dep")
+    # dep_id = -1
+    # for person in persons:
+    #     person_manage_task = person.task_set.all()
+    #     if person_manage_task :
+    #         if dep_id != person.dep_id:
+    #             data0 = {}
+    #             dep_id = person.dep_id
+    #         data0["labels"].append(models.CONDITION_LIST[i])
+    #         data0["counts"].append(count)
+    #         data0["colors"].append(models.CONDITION_COLOR_16[i])
+
+
+
+
+    models.taskChartsData = data
+
+
+update_prj_charts()
+update_task_charts()

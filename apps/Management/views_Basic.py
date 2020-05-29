@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,HttpResponse
 from apps.Management import models
 from django.forms import Form
 from django.forms import fields
-
+import json
 
 # Create your views here.
 
@@ -39,5 +39,19 @@ def logout(request):
     if request.session.get('user_info'):
         request.session.clear()
     return redirect('/plm/management/login/')
+
+
+def tasks_charts(request):
+    if request.method == "GET":
+
+        tasks = models.Task.objects.filter(condition__in=[1, 2, 3]).order_by("parent_task_id").prefetch_related("parent_project").prefetch_related("principle")
+        return render(request, "management/Task/tasks_charts.html", {"tasks": tasks})
+    else:
+        return HttpResponse(json.dumps(models.taskChartsData))
+
+
+def load_tasks_charts(request):
+    pass
+
 
 

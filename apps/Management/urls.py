@@ -1,6 +1,6 @@
 from django.urls import path
 from apps.Management import views_Prob
-from apps.Management import views_Task, views_HR, views_Prj
+from apps.Management import views_Task, views_HR, views_Prj, views_Basic
 
 urlpatterns = [
 
@@ -19,6 +19,8 @@ urlpatterns = [
     path('project/del/', views_Prj.prj_del),
     path('project/edit/', views_Prj.prj_edit),
     path('project/data/', views_Prj.prj_data),
+
+    path('task/charts/', views_Basic.tasks_charts),
 
     path('task/select_by_prj/', views_Task.select_by_prj),
     path('task/task_by_prj/', views_Task.task_by_prj),
@@ -41,7 +43,6 @@ urlpatterns = [
     path('upload/', views_Task.upload),
     path('download/', views_Task.download),
     path('delete/', views_Task.delete),
-
     path('problem/', views_Prob.problem_inspect),
 
 ]
