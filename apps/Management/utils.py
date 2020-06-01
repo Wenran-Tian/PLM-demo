@@ -178,6 +178,35 @@ def update_task_charts():
     for value in times_tasks.values():
         data["tasks"].append(value)
 
+    data["dep_charts"] = []
+    ptt = models.PersonToTask.objects.prefetch_related("task", "task__parent_project", "person", "person__dep").order_by("person__dep_id")
+    tasks_num = ptt.count()
+
+    for j in range(5):
+        ptt_ds = ptt.filter(person__dep_id=j+1).all()
+        count = ptt_ds.count()
+        dep_dict = {}
+
+        if count != 0:
+            dep_dict['name'] = ptt_ds[0].person.dep.title
+            print(dep_dict['name'])
+            dep_dict["labels"] = []
+            dep_dict["counts"] = []
+            dep_dict["colors"] = []
+            dep_dict["tasks"] = count
+            for i in range(len(models.CONDITION_LIST)):
+                count = ptt_ds.filter(task__condition=i).count()
+                if count != 0:
+                    dep_dict["labels"].append(models.CONDITION_LIST[i])
+                    dep_dict["counts"].append(count)
+                    dep_dict["colors"].append(models.CONDITION_COLOR_16[i])
+                dep_dict["length"] = len(dep_dict["labels"])
+
+        data["dep_charts"].append(dep_dict)
+
+        # print(data["dep_charts"][j])
+
+
     # data["dep_condition"] = []
     # persons = models.personnel.objects.order_by("dep")
     # dep_id = -1
@@ -191,9 +220,7 @@ def update_task_charts():
     #         data0["counts"].append(count)
     #         data0["colors"].append(models.CONDITION_COLOR_16[i])
 
-
-
-
+    models.depChartsData = data["dep_charts"]
     models.taskChartsData = data
 
 

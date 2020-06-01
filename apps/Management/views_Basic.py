@@ -45,7 +45,8 @@ def tasks_charts(request):
     if request.method == "GET":
 
         tasks = models.Task.objects.filter(condition__in=[1, 2, 3]).order_by("parent_task_id").prefetch_related("parent_project").prefetch_related("principle")
-        return render(request, "management/Task/tasks_charts.html", {"tasks": tasks})
+        nums = models.Task.objects.count()
+        return render(request, "management/Task/tasks_charts.html", {"tasks": tasks, "depdata": models.depChartsData, "total_num": nums })
     else:
         return HttpResponse(json.dumps(models.taskChartsData))
 

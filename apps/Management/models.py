@@ -118,4 +118,5 @@ python manage.py migrate
 
 prjChartsData = {}
 taskChartsData = {}
+depChartsData = {}
 

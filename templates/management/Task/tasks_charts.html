@@ -30,8 +30,8 @@
                         </thead>
                         {% for task in tasks %}
                             <tr>
-                                <td><a href="/plm/management/task/task_by_prj?pid={{ task.parent_project.id }}" class="btn-outline-secondary">{{ task.parent_project.prj_name }}</a></td>
-                                <td><a href="/plm/management/task/inspect?tid={{ task.id }}"  class="btn-outline-secondary">{{ task.task_name }}</a></td>
+                                <td><a href="/plm/management/task/task_by_prj?pid={{ task.parent_project.id }}" class="btn-outline-secondary" target="_blank">{{ task.parent_project.prj_name }}</a></td>
+                                <td><a href="/plm/management/task/inspect?tid={{ task.id }}"  class="btn-outline-secondary" >{{ task.task_name }}</a></td>
                                 <td>{{ task.principle.name }}</td>
                                 <td>{{ task.t_start_time.year }}-{{ task.t_start_time.month }}-{{ task.t_start_time.day }}</td>
                                 <td>{{ task.t_end_time.year }}-{{ task.t_end_time.month }}-{{ task.t_end_time.day }}</td>
@@ -66,7 +66,8 @@
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="mb-3">任务执行情况分布（整体）</h4>
+                    <h4 class="mb-3" style="float: left">任务执行情况分布（整体） </h4>
+                    <p style="float: right">任务总数：{{ total_num }}</p>
                     <div class="flot-container">
                         <div id="flot-pie" class="flot-pie-container"></div>
                     </div>
@@ -82,6 +83,44 @@
                 </div>
             </div>
         </div><!-- /# column -->
+    </div><!-- /# row -->
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-3" style="float: left">销售部 </h4>
+                    <p style="float: right">任务总数：{{ depdata.0.tasks }}</p>
+                    <div class="flot-container">
+                        <div id="flot-pie1" class="flot-pie-container"></div>
+                    </div>
+                </div>
+            </div><!-- /# card -->
+        </div><!-- /# column -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-3" style="float: left">开发部 </h4>
+                    <p style="float: right">任务总数：{{ depdata.1.tasks }}</p>
+                    <div class="flot-container">
+                        <div id="flot-pie2" class="flot-pie-container"></div>
+                    </div>
+                </div>
+            </div><!-- /# card -->
+        </div><!-- /# column -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-3" style="float: left">物流部 </h4>
+                    <p style="float: right">任务总数：{{ depdata.2.tasks }}</p>
+                    <div class="flot-container">
+                        <div id="flot-pie3" class="flot-pie-container"></div>
+                    </div>
+                </div>
+            </div><!-- /# card -->
+        </div><!-- /# column -->
+
+
     </div><!-- /# row -->
 
 
@@ -109,6 +148,9 @@
             data: {'csrfmiddlewaretoken': csrf},
             success: function (updData) {
                 var data = [];
+                var updData_buff = updData;
+
+                // data for overall tasks distribution
                 for (let i = 0; i < updData.length; i++) {
                     s = {
                         label: updData.labels[i],
@@ -117,7 +159,6 @@
                     };
                     data.push(s)
                 }
-
                 var plotObj = $.plot($("#flot-pie"), data, {
                     series: {
                         pie: {
@@ -142,9 +183,116 @@
                     }
                 });
 
+                // for sale dep
+                data = [];
+                updData = updData_buff.dep_charts[0];
+                for (let i = 0; i < updData.length; i++) {
+                    s = {
+                        label: updData.labels[i],
+                        data: updData.counts[i],
+                        color: updData.colors[i]
+                    };
+                    data.push(s)
+                }
+                var plotObj = $.plot($("#flot-pie1"), data, {
+                    series: {
+                        pie: {
+                            show: true,
+                            radius: 1,
+                            label: {
+                                show: false,
+                            }
+                        }
+                    },
+                    grid: {
+                        hoverable: true
+                    },
+                    tooltip: {
+                        show: true,
+                        content: "%p.0%, %s, n=%n", // show percentages, rounding to 2 decimal places
+                        shifts: {
+                            x: 20,
+                            y: 0
+                        },
+                        defaultTheme: false
+                    }
+                });
+
+                // for develop dep
+                data = [];
+                updData = updData_buff.dep_charts[1];
+                for (let i = 0; i < updData.length; i++) {
+                    s = {
+                        label: updData.labels[i],
+                        data: updData.counts[i],
+                        color: updData.colors[i]
+                    };
+                    data.push(s)
+                }
+                var plotObj = $.plot($("#flot-pie2"), data, {
+                    series: {
+                        pie: {
+                            show: true,
+                            radius: 1,
+                            label: {
+                                show: false,
+                            }
+                        }
+                    },
+                    grid: {
+                        hoverable: true
+                    },
+                    tooltip: {
+                        show: true,
+                        content: "%p.0%, %s, n=%n", // show percentages, rounding to 2 decimal places
+                        shifts: {
+                            x: 20,
+                            y: 0
+                        },
+                        defaultTheme: false
+                    }
+                });
+
+                // for logistics dep
+                data = [];
+                updData = updData_buff.dep_charts[2];
+                for (let i = 0; i < updData.length; i++) {
+                    s = {
+                        label: updData.labels[i],
+                        data: updData.counts[i],
+                        color: updData.colors[i]
+                    };
+                    data.push(s)
+                }
+                var plotObj = $.plot($("#flot-pie3"), data, {
+                    series: {
+                        pie: {
+                            show: true,
+                            radius: 1,
+                            label: {
+                                show: false,
+                            }
+                        }
+                    },
+                    grid: {
+                        hoverable: true
+                    },
+                    tooltip: {
+                        show: true,
+                        content: "%p.0%, %s, n=%n", // show percentages, rounding to 2 decimal places
+                        shifts: {
+                            x: 20,
+                            y: 0
+                        },
+                        defaultTheme: false
+                    }
+                });
+
+
+                updData = updData_buff;
                 // single bar chart
                 var ctx = document.getElementById("singelBarChart");
-                ctx.height = 91;
+                ctx.height = 86;
                 var myChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
