@@ -171,27 +171,102 @@
     {% csrf_token %}
     <h3>任务统计:</h3><p></p>
 
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-3">任务执行情况分布</h4>
+                    <div class="flot-container">
+                        <div id="flot-pie" class="flot-pie-container"></div>
+                    </div>
+                </div>
+            </div><!-- /# card -->
+        </div><!-- /# column -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-3">任务统计数据</h4>
+                </div>
                 <div class="row">
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="mb-3">任务执行情况分布</h4>
-                            <div class="flot-container">
-                                <div id="flot-pie" class="flot-pie-container"></div>
+                    <div class="col-lg-4" style="margin-left: 20px">
+                        <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-3">
+                                        <i class="pe-7s-browser"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count">{{ data.tasks }}</span></div>
+                                            <div class="stat-heading">任务数</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div><!-- /# card -->
-                </div><!-- /# column -->
+                    </div>
+                        <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-3">
+                                        <i class="pe-7s-browser"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count">{{ data.finished }}</span></div>
+                                            <div class="stat-heading">完成数</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-{#                <div class="col-lg-8">#}
-{#                    <div class="card">#}
-{#                        <div class="card-body">#}
-{#                            <h4 class="mb-3">项目时间分布 </h4>#}
-{#                            <canvas id="singelBarChart"></canvas>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div><!-- /# column -->#}
-            </div><!-- /# row -->
+                    </div>
+
+                    <div class="col-lg-7" style="margin-top: -20px">
+                        <div class="card-body">
+                            <div class="progress-box progress-1">
+                                <h4 class="por-title">按时完成任务</h4>
+                                <div class="por-txt">{{ data.on_time }}件 ({{ data.on_time_rate }}%)</div>
+                                <div class="progress mb-2" style="height: 5px;">
+                                    <div class="progress-bar bg-flat-color-1" role="progressbar" style="width: {{ data.on_time_rate }}%;"
+                                         aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="progress-box progress-2">
+                                <h4 class="por-title">当前正常进行任务</h4>
+                                <div class="por-txt">{{ data.normal }}件 ({{ data.normal_proportion }}%)</div>
+                                <div class="progress mb-2" style="height: 5px;">
+                                    <div class="progress-bar bg-flat-color-3" role="progressbar" style="width: {{ data.normal_proportion }}%;"
+                                         aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="progress-box progress-2">
+                                <h4 class="por-title">当前预警与延期任务</h4>
+                                <div class="por-txt">{{ data.warning }}件 ({{ data.warning_proportion }}%)</div>
+                                <div class="progress mb-2" style="height: 5px;">
+                                    <div class="progress-bar bg-flat-color-4" role="progressbar" style="width: {{ data.warning_proportion }}%;"
+                                         aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div> <!-- /.card-body -->
+                    </div>
+                </div>
+
+            </div><!-- /# card -->
+        </div><!-- /# column -->
+        {#                <div class="col-lg-8">#}
+        {#                    <div class="card">#}
+        {#                        <div class="card-body">#}
+        {#                            <h4 class="mb-3">项目时间分布 </h4>#}
+        {#                            <canvas id="singelBarChart"></canvas>#}
+        {#                        </div>#}
+        {#                    </div>#}
+        {#                </div><!-- /# column -->#}
+    </div><!-- /# row -->
 {% endblock %}
 
 {% block js %}
@@ -208,11 +283,11 @@
 
     <script>
         let csrf = $('input[name="csrfmiddlewaretoken"]').val();
-         $.ajax({
+        $.ajax({
             url: "/plm/management/task/task_by_person/?pid={{ person.id }}",
             type: 'POST',
             dataType: 'JSON',
-             data: {"update": "true", 'csrfmiddlewaretoken': csrf, 'pid':{{person.id}}},
+            data: {"update": "true", 'csrfmiddlewaretoken': csrf, 'pid':{{person.id}}},
             success: function (updData) {
                 {#projectStatues = updData.values;#}
                 //alert(updData);

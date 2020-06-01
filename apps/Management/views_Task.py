@@ -250,11 +250,32 @@ def task_by_person(request):
         ptt_executing = ptt.filter(person_id=pid, task__condition__gt=0, task__condition__lt=4).order_by('task__parent_project', 'task__task_name')
         ptt_notstart = ptt.filter(person_id=pid, task__condition=0).order_by('task__parent_project', 'task__task_name')
         ptt_finished = ptt.filter(person_id=pid, task__condition__in=[5, 6]).order_by('task__parent_project', 'task__task_name')
+        data = {}
+        condition_list = []
+        tasks = 0
+        for i in range(len(models.CONDITION_LIST)):
+            count = ptt.filter(task__condition=i).count()
+            tasks += count
+            condition_list.append(count)
+        data["tasks"] = tasks
+        data["finished"] = condition_list[5]+condition_list[6]
+        data["on_time"] = condition_list[5]
+        try:
+            data["on_time_rate"] = round(100*condition_list[5]/(condition_list[3]+condition_list[5]+condition_list[6]), 3)
+        except:
+            pass
+        now_tasks = condition_list[1] + condition_list[2] + condition_list[3]
+        if now_tasks != 0:
+            data["warning_proportion"] = 100*(condition_list[2] + condition_list[3])/now_tasks
+            data["warning"] = condition_list[2] + condition_list[3]
+            data["normal_proportion"] = 100 * (condition_list[1]) / now_tasks
+            data["normal"] = condition_list[1]
+
         return render(request, "management/Task/task_by_person.html", {"person": person,
                                                                        "ptt_executings": ptt_executing,
                                                                        "ptt_notstarts": ptt_notstart,
                                                                        "ptt_finisheds": ptt_finished,
-                                                                       })
+                                                                       "data": data })
     else:
         pid = int(request.POST.get("pid"))
         ptt = models.PersonToTask.objects.filter(person_id=pid).prefetch_related("task", "task__parent_project",
@@ -270,7 +291,6 @@ def task_by_person(request):
                 data["counts"].append(count)
                 data["colors"].append(models.CONDITION_COLOR_16[i])
             data["length"] = len(data["labels"])
-
         return HttpResponse(json.dumps(data))
 
 
